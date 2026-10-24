@@ -31,3 +31,21 @@
 {"v":1,"ts":"2026-10-24T23:04:27.243Z","why":"最初のコミットの前に、テープに無い変更が無いか確かめる","cmd":["srwr","tapes","check"],"dir":".","exit":0,"ms":19}
 {"v":1,"ts":"2026-10-24T23:04:30.697Z","why":"最初のコミットに入れるため、テープを閉じて圧縮する","cmd":["srwr","tapes","new"],"dir":".","exit":0,"ms":31}
 {"v":1,"ts":"2026-10-24T23:04:34.305Z","why":"最初のコミットは全ファイルが対象なので、git add -A に入るものを先に確かめる","cmd":["git","add","-A","--dry-run"],"dir":".","exit":0,"ms":5}
+{"v":1,"ts":"2026-10-24T23:04:38.376Z","why":"dry-run で確かめた全ファイルを、最初のコミットの対象にする","cmd":["git","add","-A"],"dir":".","exit":0,"ms":6}
+{"v":1,"ts":"2026-10-24T23:04:41.716Z","why":"コミットに入るものを、足したあとにもう一度確かめる","cmd":["git","status","--short"],"dir":".","exit":0,"ms":3}
+{"v":1,"ts":"2026-10-24T23:16:14.635Z","why":"AskUserQuestion で聞いた、診断の人間向けの形を記録する","cmd":["mtqg","q","add","診断の人間向けの形（--json なしで標準エラー出力に出すもの）を、箱・ノードが先頭の複数行の形にするか、コンパイラ風の file:line:col で始まる1行にするか"],"dir":".","exit":0,"ms":3}
+{"v":1,"ts":"2026-10-24T23:16:20.216Z","why":"人間の答えを記録する（AIが代筆）","cmd":["env","MTQG_AUTHOR_KIND=human","MTQG_AUTHOR_NAME=amisonnet8","mtqg","q","add","3d39f7eb93","箱・ノードが先頭の形にする。1行目に重さ・コード・箱・ノード・パス、2行目に message、続けて 位置（file:line:col）・ヒント・候補。無い項目の行は出さず、診断の間は空行1つ。AIが代筆"],"dir":".","exit":0,"ms":5}
+{"v":1,"ts":"2026-10-24T23:16:20.409Z","why":"答えの出た質問を閉じる","cmd":["mtqg","q","done","3d39f7eb93"],"dir":".","exit":0,"ms":4}
+{"v":1,"ts":"2026-10-24T23:17:08.183Z","why":"JSON の整形の期待値を、実装と別の道具で仕様の例から求める","cmd":["sh","-c","sed -n \"/^### 6.1/,/^### 6.2/p\" docs/reference/language.md | sed -n \"/^\\`\\`\\`json/,/^\\`\\`\\`$/p\" | sed \"1d;\\$d\" | jq \"[.]\""],"dir":".","exit":0,"ms":25}
+{"v":1,"ts":"2026-10-24T23:18:02.919Z","why":"diag を書いたあと、整形と vet・lint・テストを通す","cmd":["qsoku","fmt"],"dir":".","exit":0,"ms":187}
+{"v":1,"ts":"2026-10-24T23:18:06.279Z","why":"diag を書いたあとの確認","cmd":["qsoku","check"],"dir":".","exit":1,"ms":1823}
+{"v":1,"ts":"2026-10-24T23:18:18.932Z","why":"lint の指摘を直したあとの確認","cmd":["qsoku","check"],"dir":".","exit":0,"ms":1704}
+{"v":1,"ts":"2026-10-24T23:18:26.913Z","why":"最初の本物のパッケージ internal/diag ができ、空のモジュールのためのプレースホルダーが要らなくなったため消す","cmd":["git","rm","-q","internal/doc.go"],"dir":".","exit":0,"ms":2}
+{"v":1,"ts":"2026-10-24T23:18:52.614Z","why":"doc.go は M1-1 で消したので、M1-6 の todo の本文から外す","cmd":["mtqg","edit","6ccee9c41a","[M1-6] cmd/boxundle の骨組み：引数の解析、終了コード（0・1・2・3）、panic を BX-INTERNAL で報告、fmt（--check・--write）と version。os/exec の e2e テスト。tools/licenses の TestRun を ./cmd/boxundle のテストに書き換える"],"dir":".","exit":0,"ms":3}
+{"v":1,"ts":"2026-10-24T23:18:52.848Z","why":"M1-1 で決めたことを残す","cmd":["mtqg","m","add","[M1-1] diag を作った。決めたこと：(1) 人間向けの形は q 3d39f7eb93 で了承されたもので、language.md 6.1 に例を書いた。severity は error か warning（warning は BX073 だけ）、--json の診断が無ければ [] とも明記した。(2) JSON は2字下げで、HTML 向けのエスケープ（<>&）をしない（仕様の例の見た目に合わせ、日本語や記号をそのまま読めるようにするため）。(3) Span は値で持ち、omitzero で省く。Pos は行と列だけで、バイトの位置は持たない（patch は AST を書き直すので要らない。要れば syntax 側で持つ）。(4) コードの定数名は BX001・BXRun001・BXTest001・BXInternal。一覧 AllCodes は language.md 6.2 の表とテストで突き合わせる。(5) 最初の本物のパッケージなので internal/doc.go を消し、directory-structure.md を直した"],"dir":".","exit":0,"ms":3}
+{"v":1,"ts":"2026-10-24T23:18:53.027Z","why":"M1-1 が終わったので閉じる","cmd":["mtqg","t","done","4d559024cd"],"dir":".","exit":0,"ms":3}
+{"v":1,"ts":"2026-10-24T23:18:58.333Z","why":"doc.go を消し文書を直したあとの、コミット前の最終確認","cmd":["qsoku","check"],"dir":".","exit":0,"ms":387}
+{"v":1,"ts":"2026-10-24T23:18:58.914Z","why":"M1-1 のコミットの前に、説明の漏れを確かめる","cmd":["env","CRUBE_LANG=ja","crube","status","--require","all"],"dir":".","exit":0,"ms":5}
+{"v":1,"ts":"2026-10-24T23:18:59.096Z","why":"M1-1 のコミットの前に、テープに無い変更が無いか確かめる","cmd":["srwr","tapes","check"],"dir":".","exit":1,"ms":9}
+{"v":1,"ts":"2026-10-24T23:19:04.724Z","why":"M1-1 のコミットに入れるため、テープを閉じて圧縮する","cmd":["srwr","tapes","new"],"dir":".","exit":0,"ms":14}
+{"v":1,"ts":"2026-10-24T23:19:04.916Z","why":"M1-1 のコミットに入るものを確かめる","cmd":["git","status","--short"],"dir":".","exit":0,"ms":3}

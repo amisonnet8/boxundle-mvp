@@ -64,7 +64,9 @@ docs/	Boxundle の文書（すべて日本語）。書き方は .claude/rules/do
 		language.md	言語のリファレンス：字句・文法・意味・検証・エラーコード・値の受け渡し
 		std.md	標準の箱のリファレンス：組み込みの部品の一覧と権限
 internal/	このモジュールの中だけで使うパッケージ
-	doc.go	空のモジュールでも qsoku check が通るようにするプレースホルダー。最初の本物のパッケージを足したら消す
+	diag/	診断：利用者に返すエラー・警告の型、コードの一覧、JSON と人間向けの整形（language.md §6）
+		diag.go	Diagnostic・Code・Severity と、WriteJSON・WriteText・Text
+		diag_test.go	診断のテスト：重さ、コードの一覧と language.md §6.2 の表の一致、JSON と人間向けの形
 .gitattributes	改行（すべて LF）と、記録のファイルの merge=union
 .gitignore	git に入れないもの。ルート直下のドットで始まる名前は許可リスト方式
 .golangci.yaml	golangci-lint の設定

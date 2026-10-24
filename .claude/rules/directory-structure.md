@@ -39,7 +39,6 @@
 - **実装**は`internal/`の下に、役割ごとのパッケージで置く（`diag`・`syntax`・`types`・`check`・`value`・`interp`・`std`・`view`・`patch`・`testrun`・`stats`）。新しい役割が要るときも、§4.2 に無いパッケージを足す前に、どれかに入らないかを考える。足したら §4.2 と、この文書を直す
 - **標準の箱の宣言**（`.bx`）は`internal/std/decl/`に置き、`go:embed`で組み込む
 - **テストの入力**：エラーコードごとの最小の入力と期待する診断は`testdata/diag/`。`docs/examples/`の例はテストからそのまま読む（写しを作らない）
-- `internal/doc.go`（テンプレートのプレースホルダー）は、最初の実際のパッケージを足したら消す（`crube`の説明も消す）
 
 ## 各ファイル・ディレクトリの補足
 
@@ -47,7 +46,6 @@
 - **`tools/licenses/`**: 配布物に同梱する依存のライセンス文を集める（`.claude/rules/distribution.md`）。`go run ./tools/licenses <出力先> <main パッケージ>`。実行ファイルを置いたら、`TestRun`をその実行ファイルの一覧のテストに書き換える
 - **`.claude/skills/mutation-check/mutants/`**: 変異の道具。`go.mod`を持つ別のモジュールなので、`qsoku check`（`./...`）の対象に入らない。変えたら、そのディレクトリで整形・vet・テストを通す（Skill の「気をつけること」）
 - **`internal/`**: Goの仕組みとして、モジュールの外からimportできない。外へ公開するパッケージは`internal/`に置かない
-- **`internal/doc.go`**: `package`宣言だけのプレースホルダー。Goのパッケージが1つも無いと`qsoku vet`・`lint`・`unit`が失敗するので、空のモジュールでも`qsoku check`が通るように置いてある。実際のパッケージを足したら消す
 - **`go.sum`**: コミットする（改ざん検知・再現可能なビルドのため）
 - **`.mtqg/`**: コミットされる。中のファイルは直接編集せず、すべて`mtqg`のコマンド経由で書く（`.claude/rules/mtqg-usage.md`）。`.mtqg/.local/`はコミットされない
 - **`.bcuz/`**: bcuzが`.bcuz/history.jsonl`に追記する、コマンドの実行の記録（`.claude/rules/bcuz-usage.md`）。**コミットする**（`.gitignore`の`!/.bcuz/`）。行を足すだけなので、`.gitattributes`の`merge=union`で、マージしても両側の行が残る。コミットの前に`git add .bcuz/history.jsonl`する（`git commit`は`bcuz`を通さない）。秘密をコマンドに書かない（記録に残る）。中のファイルは直接編集しない。`.srwrignore`でテープにも載せない
