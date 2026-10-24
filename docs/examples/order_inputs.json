@@ -1,0 +1,4 @@
+{
+  "order": {"customer": "c1", "lines": [{"product": "A", "qty": 2, "price": 100}, {"product": "B", "qty": 1, "price": 50}]},
+  "stock": {"A": 5, "B": 1}
+}

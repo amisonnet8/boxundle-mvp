@@ -1,0 +1,60 @@
+# The release archives of this project (.claude/rules/distribution.md). On a
+# tag, .github/workflows/release.yml runs this, which attaches the archives to a
+# draft Release, and then publishes the Release. Locally: qsoku snapshot.
+#
+# 実行ファイルは cmd/boxundle（docs/design/mvp.md §4.2）。それを置くまでは、
+# 作るものが無いので qsoku snapshot もリリースも失敗する。goreleaser check は、
+# GitHub の remote がある git リポジトリでないと通らない。
+version: 2
+
+project_name: boxundle
+
+before:
+  hooks:
+    # The license texts of what is built into the command, put into every
+    # archive.
+    - go run ./tools/licenses bin/licenses ./cmd/boxundle
+
+builds:
+  - main: ./cmd/boxundle
+    binary: boxundle
+    env:
+      - CGO_ENABLED=0
+    goos: [linux, darwin, windows]
+    goarch: [amd64, arm64]
+    flags:
+      - -trimpath
+    # The tag as it is (v0.1.0), the same as go install shows.
+    ldflags:
+      - -s -w -X main.version={{ .Tag }}
+    mod_timestamp: "{{ .CommitTimestamp }}"
+
+archives:
+  - formats: [tar.gz]
+    format_overrides:
+      - goos: windows
+        formats: [zip]
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    files:
+      - LICENSE
+      - README.md
+      # The directory itself, not a glob: with a glob that matches one file
+      # only (a project with no dependencies has just go/LICENSE), goreleaser
+      # drops the parent directories and the archive gets licenses/LICENSE.
+      - src: bin/licenses
+        dst: licenses
+
+checksum:
+  name_template: checksums.txt
+
+snapshot:
+  version_template: "{{ incpatch .Version }}-snapshot"
+
+changelog:
+  sort: asc
+
+# A draft, which release.yml publishes once everything is attached. The draft
+# left by a failed run is replaced by the next run for the tag.
+release:
+  draft: true
+  replace_existing_draft: true

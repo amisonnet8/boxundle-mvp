@@ -1,0 +1,84 @@
+module shop
+
+type Line = {product: Str, qty: Int, price: Int}
+
+type Order = {customer: Str, lines: [Line]}
+
+type Stock = {Str -> Int}
+
+type Invoice = {customer: Str, total: Int}
+
+type Shortage = {products: [Str]}
+
+type OrderResult = Invoice | Shortage
+
+box B7 @"注文を処理する" {
+  in $order : Order
+  in $stock : Stock
+  out $result : OrderResult
+  out $new_stock : Stock
+  perm none
+
+  test "在庫が足りる注文" {
+    given {
+      order: Order{customer: "c1", lines: [Line{product: "A", qty: 2, price: 100}, Line{product: "B", qty: 1, price: 50}]},
+      stock: {"A" -> 5, "B" -> 1}
+    }
+    expect {
+      result: Invoice{customer: "c1", total: 250},
+      new_stock: {"A" -> 3, "B" -> 0}
+    }
+  }
+
+  test "1つでも足りなければ在庫不足で、在庫は変わらない" {
+    given {
+      order: Order{customer: "c1", lines: [Line{product: "A", qty: 2, price: 100}, Line{product: "B", qty: 3, price: 50}]},
+      stock: {"A" -> 5, "B" -> 1}
+    }
+    expect {
+      result: Shortage{products: ["B"]},
+      new_stock: {"A" -> 5, "B" -> 1}
+    }
+  }
+
+  test "在庫表にない商品は在庫0として扱う" {
+    given {
+      order: Order{customer: "c2", lines: [Line{product: "Z", qty: 1, price: 10}]},
+      stock: {"A" -> 5}
+    }
+    expect {
+      result: Shortage{products: ["Z"]},
+      new_stock: {"A" -> 5}
+    }
+  }
+
+  body {
+    #1 filter $order.lines as $e {
+      #1.1 lookup $stock $e.product 0
+      #1.2 lt #1.1 $e.qty
+    } @"在庫が足りない明細"
+    #2 map #1 as $e {
+      #2.1 val $e.product
+    } @"足りない商品"
+    #3 empty #1 @"全部足りている"
+    #4 route #3 {
+      true {
+        #4.1 fold $order.lines $stock as ($acc, $e) {
+          #4.1.1 lookup $acc $e.product 0
+          #4.1.2 sub #4.1.1 $e.qty
+          #4.1.3 set $acc $e.product #4.1.2
+        } @"在庫を減らした結果"
+        #4.2 map $order.lines as $e {
+          #4.2.1 mul $e.qty $e.price
+        } @"明細ごとの金額"
+        #4.3 sum #4.2 @"合計金額"
+        emit $result Invoice{customer: $order.customer, total: #4.3}
+        emit $new_stock #4.1
+      }
+      false {
+        emit $result Shortage{products: #2}
+        emit $new_stock $stock
+      }
+    }
+  }
+}

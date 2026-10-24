@@ -1,0 +1,85 @@
+.bcuz/	bcuz を通して動かしたコマンドの記録（コミットする）
+	history.jsonl	1コマンド1行の JSON：いつ・なぜ・何を・終了コード
+.claude/	リポジトリで共有する Claude Code の設定
+	hooks/	Claude Code が道具の前後に動かすフック
+		build.sh	srwr で .go・go.mod・go.sum を変えたあとに qsoku build を動かす
+		crube-untracked.sh	srwr の new でファイルを作ったあと、説明の無いパスを Claude に知らせる
+		require-bcuz.sh	bcuz を通さない Bash のコマンドを断る PreToolUse フック
+		require-bcuz.test.sh	require-bcuz.sh が通す・断るコマンドの表（qsoku hook）
+	rules/	このリポジトリで作業するときのルール（日本語）。いつ読むかは CLAUDE.md にある
+		bcuz-usage.md	Bash のコマンドを bcuz で動かす方法と、秘密をコマンドに書かないこと
+		crube-usage.md	crube の使い方：MCP と CLI、場所の探し方、説明（日本語だけ）の保ち方
+		datetime.md	日時の扱い：UTC で持ち、表示だけ利用者のタイムゾーンに直す
+		directory-structure.md	ファイルの置き場所と、リポジトリの構成
+		distribution.md	配布の方法：boxundle のバイナリ1つ、goreleaser での配布物の作り方と、リリースの流れ
+		documentation.md	文書の書き方：すべて日本語、docs の design・reference・examples の役割、例の値は道具で求める
+		mtqg-usage.md	mtqg でメモ・todo・質問・不具合・決まり事を記録する方法
+		naming.md	命名規則（決まったら書く）
+		qsoku-usage.md	ビルド・テスト・lint の qsoku の名前と呼び方
+		srwr-usage.md	ファイルは srwr だけで変える（厳格モード）こと、テープの閉じ方
+		testing.md	テスト方針と、サンドボックス・OS ごとの CI の落とし穴
+		working-with-human.md	人間への頼み方：小さなつまずき、確認、見え方の了承
+	settings.json	Claude Code の許可・サンドボックス・フック（人間が管理する）
+	skills/	Claude Code のスキル
+		commit-with-tape/	スキル：srwr のテープを閉じてコミットする
+			SKILL.md	スキルの手順
+		mutation-check/	スキル：実装をわざと壊して、テストが気づくか確かめる
+			SKILL.md	スキルの手順
+			spec.txt	プロジェクトの仕様の約束を1つずつ壊す変異の一覧（仕様の言葉で書く。最初は空）
+			mutants/	変異を入れてテストを回す道具（独立した Go モジュール）
+				go.mod	モジュールの定義（このプロジェクトとは別）
+				main.go	構文の変異、または一覧の変異を1つずつ入れ、ファイルを元に戻す
+				main_test.go	道具のテスト
+.devcontainer/	開発用のコンテナ
+	devcontainer-lock.json	コンテナを作ったときの feature の版
+	devcontainer.json	コンテナの定義と VS Code の設定
+	postCreate.sh	コンテナを作ったあとに道具（qsoku・mtqg・srwr・bcuz・crube・goreleaser・golangci-lint・Trivy）を入れ、挙げたシェル（初めは bash だけ）を配線する
+.github/	GitHub の設定
+	workflows/	GitHub Actions のワークフロー
+		ci.yml	CI：Linux・macOS・Windows での qsoku check、race、ShellCheck、Trivy
+		release.yml	タグで動くリリース。ci.yml を通してから、goreleaser の配布物を Release に添付して公開する
+.mtqg/	mtqg の作業記録：メモ・todo・質問・不具合・用語・決まり事
+	.gitattributes	journal.jsonl を merge=union でマージする
+	.gitignore	.local/ を git に入れない
+	SCHEMA.md	journal.jsonl のデータ形式
+	journal.jsonl	記録そのもの。1件1行の JSON（mtqg からだけ書く）
+	version	mtqg のデータ形式の版
+.srwr/	srwr：AI によるファイル編集のテープ（操作ごとに理由つき）
+	tapes/	閉じたテープ（コミットする）。srwr view で再生できる
+		| 作業のまとまりごとに1本のテープ（圧縮済みの *.tape.jsonl.gz）。
+		| テープは .crube/ignore で crube の対象から外してあり、説明は要らない。
+docs/	Boxundle の文書（すべて日本語）。書き方は .claude/rules/documentation.md
+	README.md	文書の一覧と、読む順番
+	design/	なぜ・どう作るか
+		mvp.md	MVP の実装計画：実装担当 AI への指示、内部の設計、ディレクトリ構成、マイルストーンと受け入れ基準
+		plan.md	計画書：構想・原則・アーキテクチャ・逆転実験の計画・ロードマップ
+	examples/	動く例。boxundle 自体のテストもこのファイルを読む
+		README.md	例のファイルの一覧と、boxundle での動かし方
+		checkout.bx	入れ子の箱・標準の箱・権限・スタブの例（order.bx の内容を含む）
+		order.bx	注文を処理する箱 B7：分岐・繰り返し・テストの基本
+		order_expected.json	order_inputs.json に対する B7 の期待される出力
+		order_inputs.json	boxundle run に渡す B7 の入力
+	reference/	何であるか（仕様の正）。実装で仕様を決めたら、ここも直す
+		cli.md	boxundle コマンドのリファレンス：各コマンド、正規形、show の表示形式、stats
+		language.md	言語のリファレンス：字句・文法・意味・検証・エラーコード・値の受け渡し
+		std.md	標準の箱のリファレンス：組み込みの部品の一覧と権限
+internal/	このモジュールの中だけで使うパッケージ
+	doc.go	空のモジュールでも qsoku check が通るようにするプレースホルダー。最初の本物のパッケージを足したら消す
+.gitattributes	改行（すべて LF）と、記録のファイルの merge=union
+.gitignore	git に入れないもの。ルート直下のドットで始まる名前は許可リスト方式
+.golangci.yaml	golangci-lint の設定
+.mcp.json	Claude Code に mtqg・srwr と、crube（日本語の crube-ja）の MCP サーバーをつなぐ設定
+.srwrignore	srwr がテープに記録しないファイル
+CLAUDE.md	このリポジトリでの Claude Code のルール（プロジェクトの概要・設計の芯・言語）と、読むべきルールファイルの案内
+LICENSE	MIT ライセンス
+README.md	Boxundle MVP の紹介と、文書への案内（インストールと使い方は M8 で書く）
+go.mod	Go モジュールと依存
+qsokufile	ビルド・テスト・lint の名前つきコマンド（qsoku）
+trivy.yaml	Trivy の設定：何を脆弱性・ライセンスの失敗とみなすか
+.goreleaser.yaml	配布物の作り方（goreleaser）
+	| タグで .github/workflows/release.yml が、手元では qsoku snapshot が使う。実行ファイルは cmd/boxundle（まだ無いので、置くまでは失敗する）。.claude/rules/distribution.md を参照。
+tools/	プロジェクトを作るための道具（実行ファイルには組み込まれない）
+	licenses/	配布物に入れる依存のライセンス文を集める
+		| go run ./tools/licenses <dir> <main パッケージ>。goreleaser がビルドの前に動かす。ライセンスのファイルが無いモジュールがあれば失敗する。
+		main.go	実行ファイルに組み込まれるモジュールを go list -deps で求め、ライセンス文を写す
+		main_test.go	ライセンス文を集める処理のテスト。TestRun はプロジェクトの実行ファイルのテストに書き換える

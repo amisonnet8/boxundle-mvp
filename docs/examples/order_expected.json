@@ -1,0 +1,4 @@
+{
+  "new_stock": {"A": 3, "B": 0},
+  "result": {"$tag": "Invoice", "customer": "c1", "total": 250}
+}

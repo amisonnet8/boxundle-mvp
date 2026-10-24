@@ -1,0 +1,38 @@
+# Entry points for building and checking this project (.claude/rules/testing.md).
+# qsoku always runs these with sh, so every entry works the same no matter which
+# shell called it.
+
+build: (cd //; go build ./...)
+
+# Rewrite files with the formatters enabled in .golangci.yaml.
+fmt: (cd //; golangci-lint fmt)
+
+vet: (cd //; go vet ./...)
+
+# Also reports files that the formatters would change. If golangci-lint is older
+# than the Go in this container it cannot read the standard library (typecheck
+# errors "export data version N is greater than ..."); say what to do about it.
+lint: (cd //; if out=$(golangci-lint run 2>&1); then printf '%s\n' "$out"; else printf '%s\n' "$out"; if printf '%s' "$out" | grep -q 'export data version'; then echo "hint: this golangci-lint is older than the Go in this container and cannot read its standard library. Update it: go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@latest (.claude/rules/testing.md)" >&2; fi; false; fi)
+
+unit: (cd //; go test ./...)
+
+# Type-check and lint for the other OSes. Turn this on (remove the "# ") once
+# the project has OS-specific files (_windows.go, _unix.go, build tags), and add
+# "&& qsoku cross" to check: a Linux-only run does not notice a broken Windows file.
+# cross: (cd //; rc=0; for os in windows darwin; do echo "== GOOS=$os"; GOOS=$os go vet ./... && GOOS=$os golangci-lint run || rc=1; done; [ "$rc" -eq 0 ])
+
+check: qsoku vet && qsoku lint && qsoku unit
+
+# -race needs cgo, which the container turns off (.devcontainer/devcontainer.json).
+race: (cd //; CGO_ENABLED=1 go test -race -count=1 ./...)
+
+trivy: (cd //; trivy fs --config trivy.yaml .)
+
+shellcheck: (cd //; git ls-files '*.sh' '*.bash' | xargs -r shellcheck)
+
+# The decision table of the hook that forces commands through bcuz (needs jq).
+hook: (cd //; bash .claude/hooks/require-bcuz.test.sh)
+
+# The release archives of .goreleaser.yaml, made without a tag into dist/, to
+# look at before tagging (needs goreleaser: .claude/rules/distribution.md).
+snapshot: (cd //; goreleaser check && goreleaser release --snapshot --clean)
