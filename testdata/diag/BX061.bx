@@ -1,0 +1,17 @@
+module m
+
+box B @"b" {
+  in $x : Int
+  out $r : Int
+  perm none
+
+  test "呼ばない箱のスタブ" {
+    stub std.clock.now {now: "2026-10-25T00:00:00Z"}
+    given {x: 1}
+    expect {r: 1}
+  }
+
+  body {
+    emit $r $x
+  }
+}

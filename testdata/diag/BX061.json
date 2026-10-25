@@ -1,0 +1,3 @@
+[
+  {"code": "BX061", "severity": "error", "message": "テスト「呼ばない箱のスタブ」のスタブの対象 std.clock.now は、箱 B から呼ばれていません", "box": "B", "span": {"file": "BX061.bx", "start": {"line": 9, "col": 10}, "end": {"line": 9, "col": 23}}, "hint": "スタブは、その箱から（入れ子を含めて）呼ばれる箱にだけ書けます"}
+]

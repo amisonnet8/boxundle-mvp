@@ -25,12 +25,15 @@ func runArgs(args ...string) result {
 const help = `使い方: boxundle <コマンド> [引数...]
 
 コマンド:
+  check FILE... [--json]        検証する
   fmt FILE [--check] [--write]  正規形で出力する
   help                          この一覧を出す
   version                       バージョンを出す
 `
 
 const fmtUsage = "使い方: boxundle fmt FILE [--check] [--write]\n"
+
+const checkUsage = "使い方: boxundle check FILE... [--json]\n"
 
 // 正規形でないモジュールと、その正規形。
 const (
@@ -91,6 +94,12 @@ func TestRunUsage(t *testing.T) {
 			result{2, "", "boxundle: ファイル「dir.bx」を読めません（ディレクトリです）\n" + fmtUsage}},
 		{"途中がファイル", []string{"fmt", "nice.bx/x.bx"},
 			result{2, "", "boxundle: ファイル「nice.bx/x.bx」を読めません（" + notDirReason() + "）\n" + fmtUsage}},
+		{"check に FILE が無い", []string{"check", "--json"},
+			result{2, "", "boxundle: check には FILE が1つ以上要ります\n" + checkUsage}},
+		{"check に未知のフラグ", []string{"check", "nice.bx", "--write"},
+			result{2, "", "boxundle: 未知のフラグ「--write」です\n" + checkUsage}},
+		{"check のファイルが1つでも読めなければ、どれも検証しない", []string{"check", "nice.bx", "nothing.bx", "--json"},
+			result{2, "", "boxundle: ファイル「nothing.bx」を読めません（見つかりません）\n" + checkUsage}},
 		{"version に引数", []string{"version", "x"},
 			result{2, "", "boxundle: version は引数を取りません\n使い方: boxundle version\n"}},
 		{"version に未知のフラグ", []string{"version", "--json"},

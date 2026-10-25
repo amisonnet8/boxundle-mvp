@@ -1,0 +1,3 @@
+[
+  {"code": "BX013", "severity": "error", "message": "ポート・束縛子 $y はありません", "box": "B", "path": "$y", "span": {"file": "BX013.bx", "start": {"line": 8, "col": 13}, "end": {"line": 8, "col": 15}}, "suggestions": ["x"]}
+]

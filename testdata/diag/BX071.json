@@ -1,0 +1,3 @@
+[
+  {"code": "BX071", "severity": "error", "message": "std.clock.now が使う権限 clock が、perm にありません", "box": "B", "node": "#1", "span": {"file": "BX071.bx", "start": {"line": 7, "col": 13}, "end": {"line": 7, "col": 26}}, "hint": "箱の perm には、本体で呼ぶ箱の権限をすべて宣言します"}
+]

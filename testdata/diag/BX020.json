@@ -1,0 +1,3 @@
+[
+  {"code": "BX020", "severity": "error", "message": "emit $r の値の型が合いません（期待した型 Int、実際の型 Str）", "box": "B", "span": {"file": "BX020.bx", "start": {"line": 8, "col": 13}, "end": {"line": 8, "col": 16}}}
+]

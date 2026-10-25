@@ -1,0 +1,7 @@
+[
+  {"code": "BX002", "severity": "error", "message": "型 Strr は定義されていません", "span": {"file": "multi.bx", "start": {"line": 3, "col": 14}, "end": {"line": 3, "col": 18}}, "suggestions": ["Str"]},
+  {"code": "BX013", "severity": "error", "message": "ポート・束縛子 $y はありません", "box": "A", "node": "#1", "path": "$y", "span": {"file": "multi.bx", "start": {"line": 10, "col": 12}, "end": {"line": 10, "col": 14}}, "suggestions": ["x"]},
+  {"code": "BX020", "severity": "error", "message": "emit $r の値の型が合いません（期待した型 Int、実際の型 Str）", "box": "A", "span": {"file": "multi.bx", "start": {"line": 11, "col": 13}, "end": {"line": 11, "col": 16}}},
+  {"code": "BX073", "severity": "warning", "message": "宣言しているが使っていない権限 random があります", "box": "C", "span": {"file": "multi.bx", "start": {"line": 17, "col": 8}, "end": {"line": 17, "col": 14}}, "hint": "本体で呼ぶ箱は、どれもこの権限を使いません"},
+  {"code": "BX071", "severity": "error", "message": "std.clock.now が使う権限 clock が、perm にありません", "box": "C", "node": "#1", "span": {"file": "multi.bx", "start": {"line": 19, "col": 13}, "end": {"line": 19, "col": 26}}, "hint": "箱の perm には、本体で呼ぶ箱の権限をすべて宣言します"}
+]

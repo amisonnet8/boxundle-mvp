@@ -21,7 +21,10 @@
 ├── .bcuz/                  ← bcuzの記録（`history.jsonl`）。`postCreate.sh`が`bcuz --init`で作る。**コミットする**（`merge=union`）
 ├── .crube/                 ← このリポジトリのファイルの説明（crube。説明は日本語の`structure_ja.txt`だけ、`ignore`は`.gitignore`に合わせて手で保つ）。**コミットする**
 ├── .srwr/                  ← srwrの鍵・ロック・テープ（最初のhook・MCPの呼び出しでできる。**閉じた`tapes/*.gz`だけコミットする**）
+├── boxundle.go             ← 公開API（`package boxundle`。テストは`boxundle_test.go`）
+├── cmd/boxundle/           ← CLI
 ├── internal/               ← このモジュールの中だけで使うコード
+├── testdata/diag/          ← エラーコードごとの最小の入力（`.bx`）と期待する診断（`.json`）
 ├── tools/licenses/         ← 配布物に入れる依存のライセンス文を集める道具（goreleaser が`go run`で動かす。実行ファイルには組み込まれない）
 ├── docs/                   ← 文書（design/：計画と実装の進め方、reference/：仕様の正、examples/：動く例。`.claude/rules/documentation.md`）
 ├── .devcontainer/          ← 開発環境（devcontainer.json、postCreate.sh）
@@ -42,7 +45,7 @@
 
 ## 各ファイル・ディレクトリの補足
 
-- **`cmd/boxundle/`**: CLI。`main.go`は、コマンドの表・引数の解析・使い方の誤り・終了コード・panic の`BX-INTERNAL`を受け持ち、コマンドごとの処理は`<コマンド>.go`（`fmt.go`・`version.go`）に置く。どれも引数を公開APIか`internal/`に渡すだけにする。コマンドの表は大域の変数にせず`commands()`が返す（テストが panic するコマンドを渡せるように）。e2e テスト（`e2e_test.go`）は、`-X main.version`を付けてビルドしたバイナリを`os/exec`で呼ぶ
+- **`cmd/boxundle/`**: CLI。`main.go`は、コマンドの表・引数の解析・使い方の誤り・終了コード・panic の`BX-INTERNAL`を受け持ち、コマンドごとの処理は`<コマンド>.go`（`check.go`・`fmt.go`・`version.go`）に置く。どれも引数を公開APIか`internal/`に渡すだけにする。コマンドの表は大域の変数にせず`commands()`が返す（テストが panic するコマンドを渡せるように）。e2e テスト（`e2e_test.go`）は、`-X main.version`を付けてビルドしたバイナリを`os/exec`で呼ぶ
 - **`tools/licenses/`**: 配布物に同梱する依存のライセンス文を集める（`.claude/rules/distribution.md`）。`go run ./tools/licenses <出力先> <main パッケージ>`。`TestRun`は`./cmd/boxundle`に組み込まれるモジュールの一覧のテスト（依存を足す・外すと落ちる）
 - **`.claude/skills/mutation-check/mutants/`**: 変異の道具。`go.mod`を持つ別のモジュールなので、`qsoku check`（`./...`）の対象に入らない。変えたら、そのディレクトリで整形・vet・テストを通す（Skill の「気をつけること」）
 - **`internal/`**: Goの仕組みとして、モジュールの外からimportできない。外へ公開するパッケージは`internal/`に置かない

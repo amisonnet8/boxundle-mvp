@@ -1,0 +1,3 @@
+[
+  {"code": "BX042", "severity": "error", "message": "箱 B はすでに定義されています", "box": "B", "span": {"file": "BX042.bx", "start": {"line": 12, "col": 5}, "end": {"line": 12, "col": 6}}, "hint": "最初の定義は 3:5 にあります"}
+]

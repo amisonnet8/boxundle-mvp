@@ -1,0 +1,13 @@
+module m
+
+box B @"b" {
+  in $xs : [Int]
+  out $r : [Int]
+  perm none
+  body {
+    #1 map $xs as $e {
+      #2.1 add $e 1
+    }
+    emit $r #1
+  }
+}

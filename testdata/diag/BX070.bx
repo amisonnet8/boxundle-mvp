@@ -1,0 +1,7 @@
+module m
+
+extern box B @"b" {
+  out $r : Int
+  perm none
+  impl builtin "b"
+}

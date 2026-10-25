@@ -1,0 +1,3 @@
+[
+  {"code": "BX014", "severity": "error", "message": "束縛子 $xs は、ポート $xs と同じ名前です", "box": "B", "node": "#1", "path": "$xs", "span": {"file": "BX014.bx", "start": {"line": 8, "col": 19}, "end": {"line": 8, "col": 22}}, "hint": "スコープの中で、ポート名と束縛子名は重ねられません"}
+]

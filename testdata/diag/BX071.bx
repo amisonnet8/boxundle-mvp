@@ -1,0 +1,10 @@
+module m
+
+box B @"b" {
+  out $r : Str
+  perm none
+  body {
+    #1 call std.clock.now {}
+    emit $r #1.now
+  }
+}

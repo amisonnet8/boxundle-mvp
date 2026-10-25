@@ -1,0 +1,3 @@
+[
+  {"code": "BX023", "severity": "error", "message": "match の分岐が足りません（C）", "box": "B", "node": "#1", "span": {"file": "BX023.bx", "start": {"line": 14, "col": 8}, "end": {"line": 14, "col": 13}}}
+]

@@ -1,0 +1,21 @@
+module m
+
+box P @"p" {
+  in $x : Int
+  out $r : Int
+  perm none
+  body {
+    #1 call Q {x: $x}
+    emit $r #1.r
+  }
+}
+
+box Q @"q" {
+  in $x : Int
+  out $r : Int
+  perm none
+  body {
+    #1 call P {x: $x}
+    emit $r #1.r
+  }
+}

@@ -1,0 +1,9 @@
+module m
+
+box B @"b" {
+  out $r : Str
+  perm clokc
+  body {
+    emit $r "x"
+  }
+}

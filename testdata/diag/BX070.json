@@ -1,0 +1,3 @@
+[
+  {"code": "BX070", "severity": "error", "message": "extern box は、利用者のファイルには書けません", "box": "B", "span": {"file": "BX070.bx", "start": {"line": 3, "col": 12}, "end": {"line": 3, "col": 13}}, "hint": "箱は box で定義し、body を書いてください"}
+]

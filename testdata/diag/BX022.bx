@@ -1,0 +1,12 @@
+module m
+
+type Line = {product: Str, qty: Int}
+
+box B @"b" {
+  in $line : Line
+  out $r : Str
+  perm none
+  body {
+    emit $r $line.prodcut
+  }
+}

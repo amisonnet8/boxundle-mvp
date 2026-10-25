@@ -1,0 +1,3 @@
+[
+  {"code": "BX005", "severity": "error", "message": "型の名前 stdT は std で始められません", "span": {"file": "BX005.bx", "start": {"line": 3, "col": 6}, "end": {"line": 3, "col": 10}}, "hint": "std で始まる名前は、標準の箱のためにあります"}
+]

@@ -1,0 +1,3 @@
+[
+  {"code": "BX003", "severity": "error", "message": "型定義が循環しています: A → B → A", "span": {"file": "BX003.bx", "start": {"line": 3, "col": 6}, "end": {"line": 3, "col": 7}}, "hint": "再帰する型は定義できません"}
+]

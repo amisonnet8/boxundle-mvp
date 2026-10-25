@@ -1,0 +1,3 @@
+[
+  {"code": "BX006", "severity": "error", "message": "型 T はすでに定義されています", "span": {"file": "BX006.bx", "start": {"line": 5, "col": 6}, "end": {"line": 5, "col": 7}}, "hint": "最初の定義は 3:6 にあります"}
+]

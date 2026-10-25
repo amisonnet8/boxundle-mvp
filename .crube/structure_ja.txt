@@ -135,3 +135,13 @@ cmd/	実行ファイルの main パッケージ
 		version.go	boxundle version（-X main.version で埋めた版、無ければモジュールの版）
 		main_test.go	CLI を同じプロセスで呼ぶテスト（出力の全文と終了コード、BX-INTERNAL、fmt、version）
 		e2e_test.go	ビルドしたバイナリを os/exec で呼ぶ e2e テスト（版の埋め込み、docs の例の fmt）
+		check.go	boxundle check（検証。--json で診断を JSON に）
+		check_test.go	boxundle check の単体テスト（終了コード・出力先・複数ファイル）
+boxundle.go	公開API（CheckText・LoadFile・CheckError・Module）
+	| 外から import されるのは、このパッケージだけ（docs/design/mvp.md §4.3）。実装は internal/ を呼ぶ
+testdata/	テストの入力（公開APIのテストが読む）
+	diag/	エラーコードごとの最小の入力（.bx）と、期待する診断（同じ名前の .json）
+		| BX001〜BX073 は、そのコードの診断だけを返す入力。multi は複数の誤りがすべて返ることを見る。boxundle_test.go の TestDiagFiles が読む。.json は CheckText に渡す名前を基本名（BX002.bx）にした診断
+		*.bx	診断を起こす最小の入力（ファイル名がそのコード）
+		*.json	同じ名前の .bx に対して期待する診断の JSON の配列
+boxundle_test.go	公開APIのテスト（testdata/diag の診断、LoadFile・CheckError）

@@ -1,0 +1,3 @@
+[
+  {"code": "BX040", "severity": "error", "message": "箱 std.text.splt はありません", "box": "B", "node": "#1", "span": {"file": "BX040.bx", "start": {"line": 8, "col": 13}, "end": {"line": 8, "col": 26}}, "suggestions": ["std.text.split"]}
+]

@@ -64,9 +64,11 @@ func TestE2E(t *testing.T) {
 	check(t, runBinary(t, bin, dir, "fmt", "ugly.bx"), result{0, niceSrc, ""})
 	check(t, runBinary(t, bin, dir, "fmt", "--write", "ugly.bx"), result{0, "", ""})
 	check(t, runBinary(t, bin, dir, "fmt", "--check", "ugly.bx"), result{0, "", ""})
+	check(t, runBinary(t, bin, dir, "check", "ugly.bx", "bad.bx"), result{1, "", badDiag})
+	check(t, runBinary(t, bin, dir, "check", "--json", "ugly.bx"), result{0, "[]\n", ""})
 }
 
-// docs の例は正規形で書かれている（fmt --check が通り、fmt の出力が元と同じ）。
+// docs の例は正規形で書かれていて（fmt --check が通り、fmt の出力が元と同じ）、check で診断が出ない。
 func TestE2EExamples(t *testing.T) {
 	bin := buildBinary(t)
 	examples := filepath.Join("..", "..", "docs", "examples")
@@ -77,5 +79,6 @@ func TestE2EExamples(t *testing.T) {
 		}
 		check(t, runBinary(t, bin, examples, "fmt", "--check", name), result{0, "", ""})
 		check(t, runBinary(t, bin, examples, "fmt", name), result{0, string(src), ""})
+		check(t, runBinary(t, bin, examples, "check", name), result{0, "", ""})
 	}
 }

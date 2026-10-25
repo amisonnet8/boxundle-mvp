@@ -1,0 +1,3 @@
+[
+  {"code": "BX072", "severity": "error", "message": "権限 clokc はありません", "box": "B", "span": {"file": "BX072.bx", "start": {"line": 5, "col": 8}, "end": {"line": 5, "col": 13}}, "suggestions": ["clock"]}
+]

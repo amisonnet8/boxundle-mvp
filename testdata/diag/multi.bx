@@ -1,0 +1,22 @@
+module m
+
+type T = {a: Strr}
+
+box A @"a" {
+  in $x : Int
+  out $r : Int
+  perm none
+  body {
+    #1 add $y 1
+    emit $r "x"
+  }
+}
+
+box C @"c" {
+  out $r : Str
+  perm random
+  body {
+    #1 call std.clock.now {}
+    emit $r #1.now
+  }
+}

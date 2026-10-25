@@ -1,0 +1,5 @@
+module m
+
+type A = {a: Int}
+
+type U = A | Int

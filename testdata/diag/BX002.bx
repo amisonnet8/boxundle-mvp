@@ -1,0 +1,3 @@
+module m
+
+type T = {a: Strr}

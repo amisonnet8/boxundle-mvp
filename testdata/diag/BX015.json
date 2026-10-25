@@ -1,0 +1,3 @@
+[
+  {"code": "BX015", "severity": "error", "message": "出力ポート $r は参照できません", "box": "B", "node": "#1", "path": "$r", "span": {"file": "BX015.bx", "start": {"line": 8, "col": 12}, "end": {"line": 8, "col": 14}}, "hint": "出力ポートは emit で値を確定させるだけで、値は読めません"}
+]

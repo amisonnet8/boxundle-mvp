@@ -1,0 +1,11 @@
+module m
+
+box B @"b" {
+  in $x : Int
+  out $r : Int
+  out $s : Int
+  perm none
+  body {
+    emit $r $x
+  }
+}

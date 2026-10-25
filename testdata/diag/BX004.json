@@ -1,0 +1,3 @@
+[
+  {"code": "BX004", "severity": "error", "message": "ユニオンの構成要素 Int は名前付きレコード型ではありません", "span": {"file": "BX004.bx", "start": {"line": 5, "col": 14}, "end": {"line": 5, "col": 17}}, "hint": "ユニオンに並べられるのは、type 名前 = {…} で定義したレコード型です"}
+]

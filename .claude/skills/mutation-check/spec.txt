@@ -174,3 +174,15 @@ CLI: fmt の --check と --write を一緒に使える | cmd/boxundle/fmt.go | i
 CLI: fmt の --check で正規形でなくても終了コード0 | cmd/boxundle/fmt.go | 正規形ではありません\n", file)⏎⇥⇥⇥return exitFailed | 正規形ではありません\n", file)⏎⇥⇥⇥return exitOK
 CLI: fmt の --write で正規形のファイルも書き直す | cmd/boxundle/fmt.go | if bytes.Equal(out, src) {⏎⇥⇥⇥return exitOK | if false {⏎⇥⇥⇥return exitOK
 CLI: version で、埋めた版よりモジュールの版を優先する | cmd/boxundle/version.go | if embedded != "" { | if false {
+CLI: check に FILE が無くても動く | cmd/boxundle/main.go | if cmd.more && len(c.args) < cmd.nargs { | if false {
+CLI: check で警告だけでも終了コード1 | cmd/boxundle/check.go | if diag.HasError(ds) { | if len(ds) > 0 {
+CLI: check の --json を標準エラー出力に出す | cmd/boxundle/check.go | diag.WriteJSON(c.stdout, ds) | diag.WriteJSON(c.stderr, ds)
+CLI: check の人間向けの診断を標準出力に出す | cmd/boxundle/check.go | diag.WriteText(c.stderr, ds) | diag.WriteText(c.stdout, ds)
+CLI: check で最後のファイルの診断だけを出す | cmd/boxundle/check.go | ds = append(ds, boxundle.CheckText(file, srcs[i])...) | ds = boxundle.CheckText(file, srcs[i])
+CLI: check で読めないファイルを飛ばす | cmd/boxundle/check.go | return c.usageError("ファイル「%s」を読めません（%s）", file, fileReason(file, err)) | continue
+
+# 公開API（mvp.md §4.3）
+公開API: 構文エラーを返さない | boxundle.go | return nil, []Diagnostic{d} | return nil, nil
+公開API: 警告だけでも LoadFile が失敗する | boxundle.go | if diag.HasError(ds) { | if len(ds) > 0 {
+公開API: 警告を Warnings に入れない | boxundle.go | Warnings: ds}, nil | }, nil
+公開API: CheckError の件数に警告を数える | boxundle.go | if d.Severity == diag.Error { | if true {

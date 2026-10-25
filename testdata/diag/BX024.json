@@ -1,0 +1,3 @@
+[
+  {"code": "BX024", "severity": "error", "message": "空のリストの型が決まりません", "box": "B", "node": "#1", "span": {"file": "BX024.bx", "start": {"line": 8, "col": 19}, "end": {"line": 8, "col": 21}}, "hint": "([] : [Int]) のように型注釈を付けてください"}
+]

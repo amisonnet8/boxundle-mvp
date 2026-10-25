@@ -1,0 +1,3 @@
+[
+  {"code": "BX030", "severity": "error", "message": "出力ポート $s が emit されていません", "box": "B", "path": "$s", "span": {"file": "BX030.bx", "start": {"line": 6, "col": 7}, "end": {"line": 6, "col": 9}}, "hint": "本体のどの経路でも、出力ポートごとにちょうど1回 emit します"}
+]

@@ -1,0 +1,3 @@
+[
+  {"code": "BX012", "severity": "error", "message": "ノード #9 はありません", "box": "B", "path": "#9", "span": {"file": "BX012.bx", "start": {"line": 8, "col": 13}, "end": {"line": 8, "col": 15}}}
+]

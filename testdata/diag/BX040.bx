@@ -1,0 +1,11 @@
+module m
+
+box B @"b" {
+  in $s : Str
+  out $r : [Str]
+  perm none
+  body {
+    #1 call std.text.splt {s: $s, sep: ","}
+    emit $r #1.parts
+  }
+}

@@ -1,0 +1,3 @@
+[
+  {"code": "BX032", "severity": "error", "message": "route の分岐に、値で終わる分岐（true）と emit で終わる分岐（false）が混ざっています", "box": "B", "node": "#1", "span": {"file": "BX032.bx", "start": {"line": 8, "col": 8}, "end": {"line": 8, "col": 13}}, "hint": "どの分岐も値で終わるか、どの分岐も emit で終わるように揃えてください"}
+]

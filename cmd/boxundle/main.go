@@ -28,7 +28,8 @@ type command struct {
 	usage string   // 名前のあとの引数（使い方の行と一覧に出す）
 	about string   // 一覧に出す説明
 	flags []string // 受け付ける真偽のフラグ（--check など）
-	nargs int      // フラグでない引数の数
+	nargs int      // フラグでない引数の数（more なら、その数以上）
+	more  bool
 	run   func(c *call) int
 }
 
@@ -56,6 +57,10 @@ func usageLine(name string, cmd command) string {
 // commands は、コマンドの表を返す。テストが別の表を渡せるように、大域の変数にしない。
 func commands() map[string]command {
 	return map[string]command{
+		"check": {
+			usage: "FILE... [--json]", about: "検証する",
+			flags: []string{"--json"}, nargs: 1, more: true, run: runCheck,
+		},
 		"fmt": {
 			usage: "FILE [--check] [--write]", about: "正規形で出力する",
 			flags: []string{"--check", "--write"}, nargs: 1, run: runFmt,
@@ -102,7 +107,10 @@ func runWith(cmds map[string]command, args []string, stdout, stderr io.Writer) (
 			c.args = append(c.args, a)
 		}
 	}
-	if len(c.args) != cmd.nargs {
+	if cmd.more && len(c.args) < cmd.nargs {
+		return c.usageError("%s には FILE が%dつ以上要ります", name, cmd.nargs)
+	}
+	if !cmd.more && len(c.args) != cmd.nargs {
 		if cmd.nargs == 0 {
 			return c.usageError("%s は引数を取りません", name)
 		}

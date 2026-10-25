@@ -1,0 +1,3 @@
+[
+  {"code": "BX073", "severity": "warning", "message": "宣言しているが使っていない権限 clock があります", "box": "B", "span": {"file": "BX073.bx", "start": {"line": 5, "col": 8}, "end": {"line": 5, "col": 13}}, "hint": "本体で呼ぶ箱は、どれもこの権限を使いません"}
+]

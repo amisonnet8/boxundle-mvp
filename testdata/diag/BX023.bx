@@ -1,0 +1,21 @@
+module m
+
+type A = {a: Int}
+
+type C = {c: Int}
+
+type U = A | C
+
+box B @"b" {
+  in $u : U
+  out $r : Int
+  perm none
+  body {
+    #1 match $u {
+      A $v {
+        #1.1 val $v.a
+      }
+    }
+    emit $r #1
+  }
+}

@@ -1,0 +1,3 @@
+[
+  {"code": "BX022", "severity": "error", "message": "レコード型 Line にフィールド prodcut はありません", "box": "B", "path": "$line.prodcut", "span": {"file": "BX022.bx", "start": {"line": 10, "col": 13}, "end": {"line": 10, "col": 26}}, "hint": "フィールド名の綴りを確認してください", "suggestions": ["product"]}
+]

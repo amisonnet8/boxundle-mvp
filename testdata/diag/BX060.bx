@@ -1,0 +1,16 @@
+module m
+
+box B @"b" {
+  in $x : Int
+  out $r : Int
+  perm none
+
+  test "型が合わない" {
+    given {x: "1"}
+    expect {r: 1}
+  }
+
+  body {
+    emit $r $x
+  }
+}
