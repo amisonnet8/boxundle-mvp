@@ -1,0 +1,19 @@
+externs std.http
+
+extern box std.http.get @"HTTP の GET を送る" {
+  in $url : Str
+  out $status : Int
+  out $text : Str
+  perm net
+  impl builtin "http.get"
+}
+
+extern box std.http.post @"HTTP の POST を送る" {
+  in $url : Str
+  in $text : Str
+  in $content_type : Str
+  out $status : Int
+  out $text : Str
+  perm net
+  impl builtin "http.post"
+}

@@ -1,0 +1,47 @@
+externs std.math
+
+extern box std.math.sqrt @"平方根を求める" {
+  in $x : Dec
+  out $result : Dec
+  perm none
+
+  test "2 の平方根は有効桁28" {
+    given {
+      x: 2.0
+    }
+    expect {
+      result: 1.414213562373095048801688724
+    }
+  }
+
+  impl builtin "math.sqrt"
+}
+
+extern box std.math.pow @"整数乗を求める" {
+  in $x : Dec
+  in $n : Int
+  out $result : Dec
+  perm none
+
+  test "2乗" {
+    given {
+      x: 1.5,
+      n: 2
+    }
+    expect {
+      result: 2.25
+    }
+  }
+
+  test "負の指数は逆数" {
+    given {
+      x: 2.0,
+      n: -2
+    }
+    expect {
+      result: 0.25
+    }
+  }
+
+  impl builtin "math.pow"
+}

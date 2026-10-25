@@ -54,7 +54,7 @@ impl        = "impl" "builtin" STRING ;                    (* Goの実装の登�
 | `std.text.slice` | s: Str, start: Int, end: Int | s: Str | コードポイント単位。負の値は末尾から数える。範囲は [0, 長さ] に丸める。start ≥ end なら空 |
 | `std.text.parse_int` | s: Str | ok: Bool, value: Int | 前後の空白を許す。失敗時は ok=false, value=0 |
 | `std.text.parse_dec` | s: Str | ok: Bool, value: Dec | 同上 |
-| `std.text.pad_left` | s: Str, width: Int, fill: Str | s: Str | fillは1コードポイント。それ以外は `BX-RUN-010` |
+| `std.text.pad_left` | s: Str, width: Int, fill: Str | s: Str | 幅はコードポイントで数え、sが幅以上ならそのまま。fillは1コードポイント。それ以外は `BX-RUN-010` |
 
 ## 4. std.re（perm none）
 
@@ -104,10 +104,10 @@ impl        = "impl" "builtin" STRING ;                    (* Goの実装の登�
 | `std.env.get` | env | name: Str, default: Str | value: Str | |
 | `std.fs.read_text` | fs.read | path: Str | text: Str | `--fs-root` からの相対パス。UTF-8でなければ `BX-RUN-010` |
 | `std.fs.write_text` | fs.write | path: Str, text: Str | ok: Bool | 親ディレクトリがなければ `BX-RUN-010`。既存なら上書き |
-| `std.http.get` | net | url: Str | status: Int, body: Str | |
-| `std.http.post` | net | url: Str, body: Str, content_type: Str | status: Int, body: Str | |
+| `std.http.get` | net | url: Str | status: Int, text: Str | |
+| `std.http.post` | net | url: Str, text: Str, content_type: Str | status: Int, text: Str | |
 
-- HTTPは `net/http` を使う。タイムアウト30秒、応答本文の上限10MB（超えたら `BX-RUN-010`）。本文は不正なUTF-8を置換文字にして返す。通信の失敗は `BX-RUN-010`（HTTPの4xx・5xxは失敗ではなく、status で返す）
+- HTTPは `net/http` を使う。`text` は要求・応答の本文（ポート名を `body` にしないのは、`body` がキーワードのため）。タイムアウト30秒、応答本文の上限10MB（超えたら `BX-RUN-010`）。応答本文は不正なUTF-8を置換文字にして返す。通信の失敗は `BX-RUN-010`（HTTPの4xx・5xxは失敗ではなく、status で返す）
 - 作用のある箱はテスト（`boxundle test`）の中ではスタブが必須（なければ `BX-TEST-003`）
 
 ---

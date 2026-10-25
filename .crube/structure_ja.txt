@@ -80,6 +80,13 @@ internal/	このモジュールの中だけで使うパッケージ
 			| 決まりは cli.md §2。字句の並びを変えずに書くので parse(print(ast)) == ast が成り立つ。文字列の書き出し（quote）は、制御文字と U+2028・U+2029 を 16 進数4桁のエスケープにする。
 		printer_test.go	printer のテストと M1 の受け入れテスト。docs の例を fmt にかけても1バイトも変わらないこと、parse(print(ast)) == ast、冪等
 			| 期待値は人間が書いた docs の例（order.bx・checkout.bx・std.md の宣言の例）と、cli.md §2 から手で書いた正規形。quote は、すべての文字を字句解析で読み戻して確かめる。
+	std/	標準の箱（宣言の組み込みと、Go の実装）
+		| 宣言は decl/*.bx を go:embed で組み込む（registry.go）。Go の実装と登録表は M4 で足す。
+		decl/	標準の箱の宣言（名前空間ごとの .bx）
+			| std.md の表と同じ箱・入出力・権限を、正規形で書く。作用のない箱にはテストを付ける（期待値は Python・sha256sum などで求める）。作用のある箱にはテストを付けない（スタブが必須のため）。registry_test.go が std.md と突き合わせる。
+			*.bx	1つの名前空間（std.<ファイル名>）の標準の箱の宣言
+		registry.go	標準の箱の宣言を go:embed で組み込み、名前の順に返す（DeclFiles）
+		registry_test.go	宣言が構文解析でき、正規形で、std.md の表と一致し、作用のない箱にテストがあることのテスト
 .gitattributes	改行（すべて LF）と、記録のファイルの merge=union
 .gitignore	git に入れないもの。ルート直下のドットで始まる名前は許可リスト方式
 .golangci.yaml	golangci-lint の設定

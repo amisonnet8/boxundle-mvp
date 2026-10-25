@@ -1,0 +1,13 @@
+externs std.clock
+
+extern box std.clock.now @"現在時刻を返す" {
+  out $now : Str
+  perm clock
+  impl builtin "clock.now"
+}
+
+extern box std.clock.today @"今日の日付を返す" {
+  out $date : Str
+  perm clock
+  impl builtin "clock.today"
+}

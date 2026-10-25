@@ -1,0 +1,99 @@
+externs std.re
+
+extern box std.re.matches @"正規表現に全体が一致するか" {
+  in $pattern : Str
+  in $s : Str
+  out $result : Bool
+  perm none
+
+  test "全体が数字なら一致" {
+    given {
+      pattern: "[0-9]+",
+      s: "123"
+    }
+    expect {
+      result: true
+    }
+  }
+
+  test "一部だけの一致では一致しない" {
+    given {
+      pattern: "[0-9]+",
+      s: "a1"
+    }
+    expect {
+      result: false
+    }
+  }
+
+  impl builtin "re.matches"
+}
+
+extern box std.re.search @"正規表現に一致する部分があるか" {
+  in $pattern : Str
+  in $s : Str
+  out $result : Bool
+  perm none
+
+  test "一部が一致" {
+    given {
+      pattern: "[0-9]+",
+      s: "a1"
+    }
+    expect {
+      result: true
+    }
+  }
+
+  test "どこも一致しない" {
+    given {
+      pattern: "[0-9]+",
+      s: "abc"
+    }
+    expect {
+      result: false
+    }
+  }
+
+  impl builtin "re.search"
+}
+
+extern box std.re.find_all @"正規表現に一致する部分をすべて取り出す" {
+  in $pattern : Str
+  in $s : Str
+  out $found : [Str]
+  perm none
+
+  test "数字の並びをすべて取り出す" {
+    given {
+      pattern: "[0-9]+",
+      s: "a1b22c333"
+    }
+    expect {
+      found: ["1", "22", "333"]
+    }
+  }
+
+  impl builtin "re.find_all"
+}
+
+extern box std.re.replace @"正規表現に一致する部分をすべて置き換える" {
+  in $pattern : Str
+  in $s : Str
+  in $repl : Str
+  out $s : Str
+  perm none
+
+  test "グループを入れ替える" {
+    given {
+      pattern: "([a-z]+)-([0-9]+)",
+      s: "ab-12",
+      repl: "$2-$1"
+    }
+    expect {
+      s: "12-ab"
+    }
+  }
+
+  impl builtin "re.replace"
+}

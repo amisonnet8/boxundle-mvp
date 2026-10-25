@@ -1,0 +1,16 @@
+externs std.fs
+
+extern box std.fs.read_text @"テキストファイルを読む" {
+  in $path : Str
+  out $text : Str
+  perm fs.read
+  impl builtin "fs.read_text"
+}
+
+extern box std.fs.write_text @"テキストファイルを書く" {
+  in $path : Str
+  in $text : Str
+  out $ok : Bool
+  perm fs.write
+  impl builtin "fs.write_text"
+}

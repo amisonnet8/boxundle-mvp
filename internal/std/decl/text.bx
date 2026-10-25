@@ -1,0 +1,331 @@
+externs std.text
+
+extern box std.text.split @"文字列を区切り文字で分割する" {
+  in $s : Str
+  in $sep : Str
+  out $parts : [Str]
+  perm none
+
+  test "カンマで分割" {
+    given {
+      s: "a,b,c",
+      sep: ","
+    }
+    expect {
+      parts: ["a", "b", "c"]
+    }
+  }
+
+  impl builtin "text.split"
+}
+
+extern box std.text.join @"文字列のリストを区切り文字でつなぐ" {
+  in $parts : [Str]
+  in $sep : Str
+  out $s : Str
+  perm none
+
+  test "ハイフンでつなぐ" {
+    given {
+      parts: ["a", "b", "c"],
+      sep: "-"
+    }
+    expect {
+      s: "a-b-c"
+    }
+  }
+
+  impl builtin "text.join"
+}
+
+extern box std.text.replace @"部分文字列をすべて置き換える" {
+  in $s : Str
+  in $old : Str
+  in $new : Str
+  out $s : Str
+  perm none
+
+  test "すべて置き換える" {
+    given {
+      s: "a-b-c",
+      old: "-",
+      new: "+"
+    }
+    expect {
+      s: "a+b+c"
+    }
+  }
+
+  impl builtin "text.replace"
+}
+
+extern box std.text.trim @"前後の空白を除く" {
+  in $s : Str
+  out $s : Str
+  perm none
+
+  test "タブ・空白・改行を除く" {
+    given {
+      s: "\t hi \n"
+    }
+    expect {
+      s: "hi"
+    }
+  }
+
+  impl builtin "text.trim"
+}
+
+extern box std.text.lower @"小文字にする" {
+  in $s : Str
+  out $s : Str
+  perm none
+
+  test "大文字を小文字にする" {
+    given {
+      s: "AbC"
+    }
+    expect {
+      s: "abc"
+    }
+  }
+
+  impl builtin "text.lower"
+}
+
+extern box std.text.upper @"大文字にする" {
+  in $s : Str
+  out $s : Str
+  perm none
+
+  test "小文字を大文字にする" {
+    given {
+      s: "AbC"
+    }
+    expect {
+      s: "ABC"
+    }
+  }
+
+  impl builtin "text.upper"
+}
+
+extern box std.text.starts_with @"指定の文字列で始まるか" {
+  in $s : Str
+  in $part : Str
+  out $result : Bool
+  perm none
+
+  test "始まる" {
+    given {
+      s: "boxundle",
+      part: "box"
+    }
+    expect {
+      result: true
+    }
+  }
+
+  test "始まらない" {
+    given {
+      s: "boxundle",
+      part: "dle"
+    }
+    expect {
+      result: false
+    }
+  }
+
+  impl builtin "text.starts_with"
+}
+
+extern box std.text.ends_with @"指定の文字列で終わるか" {
+  in $s : Str
+  in $part : Str
+  out $result : Bool
+  perm none
+
+  test "終わる" {
+    given {
+      s: "boxundle",
+      part: "dle"
+    }
+    expect {
+      result: true
+    }
+  }
+
+  test "終わらない" {
+    given {
+      s: "boxundle",
+      part: "box"
+    }
+    expect {
+      result: false
+    }
+  }
+
+  impl builtin "text.ends_with"
+}
+
+extern box std.text.contains @"指定の文字列を含むか" {
+  in $s : Str
+  in $part : Str
+  out $result : Bool
+  perm none
+
+  test "含む" {
+    given {
+      s: "boxundle",
+      part: "und"
+    }
+    expect {
+      result: true
+    }
+  }
+
+  test "含まない" {
+    given {
+      s: "boxundle",
+      part: "xyz"
+    }
+    expect {
+      result: false
+    }
+  }
+
+  impl builtin "text.contains"
+}
+
+extern box std.text.slice @"コードポイントの範囲を切り出す" {
+  in $s : Str
+  in $start : Int
+  in $end : Int
+  out $s : Str
+  perm none
+
+  test "負の終わりは末尾から数える" {
+    given {
+      s: "あいうえお",
+      start: 1,
+      end: -1
+    }
+    expect {
+      s: "いうえ"
+    }
+  }
+
+  test "範囲を超えたら長さに丸める" {
+    given {
+      s: "あいう",
+      start: 1,
+      end: 10
+    }
+    expect {
+      s: "いう"
+    }
+  }
+
+  test "start が end 以上なら空" {
+    given {
+      s: "あいう",
+      start: 2,
+      end: 1
+    }
+    expect {
+      s: ""
+    }
+  }
+
+  impl builtin "text.slice"
+}
+
+extern box std.text.parse_int @"文字列を整数として読む" {
+  in $s : Str
+  out $ok : Bool
+  out $value : Int
+  perm none
+
+  test "数字なら読める" {
+    given {
+      s: " 42 "
+    }
+    expect {
+      ok: true,
+      value: 42
+    }
+  }
+
+  test "数字でなければ失敗" {
+    given {
+      s: "abc"
+    }
+    expect {
+      ok: false,
+      value: 0
+    }
+  }
+
+  impl builtin "text.parse_int"
+}
+
+extern box std.text.parse_dec @"文字列を小数として読む" {
+  in $s : Str
+  out $ok : Bool
+  out $value : Dec
+  perm none
+
+  test "小数なら読める" {
+    given {
+      s: " 3.14 "
+    }
+    expect {
+      ok: true,
+      value: 3.14
+    }
+  }
+
+  test "小数でなければ失敗" {
+    given {
+      s: "abc"
+    }
+    expect {
+      ok: false,
+      value: 0.0
+    }
+  }
+
+  impl builtin "text.parse_dec"
+}
+
+extern box std.text.pad_left @"左を埋めて幅をそろえる" {
+  in $s : Str
+  in $width : Int
+  in $fill : Str
+  out $s : Str
+  perm none
+
+  test "ゼロで埋める" {
+    given {
+      s: "7",
+      width: 3,
+      fill: "0"
+    }
+    expect {
+      s: "007"
+    }
+  }
+
+  test "幅より長ければそのまま" {
+    given {
+      s: "1234",
+      width: 3,
+      fill: "0"
+    }
+    expect {
+      s: "1234"
+    }
+  }
+
+  impl builtin "text.pad_left"
+}

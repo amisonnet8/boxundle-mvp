@@ -1,0 +1,92 @@
+externs std.date
+
+extern box std.date.is_valid @"日付として正しいか" {
+  in $date : Str
+  out $result : Bool
+  perm none
+
+  test "うるう年の2月29日は正しい" {
+    given {
+      date: "2024-02-29"
+    }
+    expect {
+      result: true
+    }
+  }
+
+  test "平年の2月29日は正しくない" {
+    given {
+      date: "2023-02-29"
+    }
+    expect {
+      result: false
+    }
+  }
+
+  impl builtin "date.is_valid"
+}
+
+extern box std.date.add_days @"日数を足す" {
+  in $date : Str
+  in $days : Int
+  out $date : Str
+  perm none
+
+  test "うるう日をまたいで月が変わる" {
+    given {
+      date: "2024-02-28",
+      days: 2
+    }
+    expect {
+      date: "2024-03-01"
+    }
+  }
+
+  impl builtin "date.add_days"
+}
+
+extern box std.date.diff_days @"2つの日付の日数差を求める" {
+  in $from : Str
+  in $to : Str
+  out $days : Int
+  perm none
+
+  test "to が後なら正" {
+    given {
+      from: "2026-01-01",
+      to: "2026-10-25"
+    }
+    expect {
+      days: 297
+    }
+  }
+
+  test "to が前なら負" {
+    given {
+      from: "2026-10-25",
+      to: "2026-01-01"
+    }
+    expect {
+      days: -297
+    }
+  }
+
+  impl builtin "date.diff_days"
+}
+
+extern box std.date.weekday @"曜日を求める（月曜=0）" {
+  in $date : Str
+  out $weekday : Int
+  perm none
+
+  test "日曜は6" {
+    given {
+      date: "2026-10-25"
+    }
+    expect {
+      weekday: 6
+    }
+  }
+
+  impl builtin "date.weekday"
+}

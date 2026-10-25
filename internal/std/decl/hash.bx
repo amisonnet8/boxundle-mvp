@@ -1,0 +1,27 @@
+externs std.hash
+
+extern box std.hash.sha256 @"SHA-256 のハッシュを小文字16進で返す" {
+  in $s : Str
+  out $hex : Str
+  perm none
+
+  test "空文字列" {
+    given {
+      s: ""
+    }
+    expect {
+      hex: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+
+  test "UTF-8 のバイト列のハッシュ" {
+    given {
+      s: "あ"
+    }
+    expect {
+      hex: "dc5a4d3d82f7e15792959dc661538ae0e541ce66494516f5c9cfd9cd3308494d"
+    }
+  }
+
+  impl builtin "hash.sha256"
+}

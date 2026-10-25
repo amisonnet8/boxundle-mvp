@@ -1,0 +1,15 @@
+externs std.random
+
+extern box std.random.int @"範囲の中の整数を乱数で返す" {
+  in $lo : Int
+  in $hi : Int
+  out $value : Int
+  perm random
+  impl builtin "random.int"
+}
+
+extern box std.random.uuid @"UUID v4 を返す" {
+  out $id : Str
+  perm random
+  impl builtin "random.uuid"
+}
