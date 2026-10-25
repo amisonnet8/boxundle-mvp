@@ -67,6 +67,9 @@ internal/	このモジュールの中だけで使うパッケージ
 	diag/	診断：利用者に返すエラー・警告の型、コードの一覧、JSON と人間向けの整形（language.md §6）
 		diag.go	Diagnostic・Code・Severity と、WriteJSON・WriteText・Text
 		diag_test.go	診断のテスト：重さ、コードの一覧と language.md §6.2 の表の一致、JSON と人間向けの形
+	syntax/	構文：字句解析・パーサ・AST・正規形の出力（language.md §2〜§3、cli.md §2）
+		lexer.go	字句解析：ソースをトークン（Token・Kind）に分け、誤りを BX001 で返す
+		lexer_test.go	字句解析のテスト：トークンの種類・位置、例のファイル、BX001 の誤りと位置、識別子の文字
 .gitattributes	改行（すべて LF）と、記録のファイルの merge=union
 .gitignore	git に入れないもの。ルート直下のドットで始まる名前は許可リスト方式
 .golangci.yaml	golangci-lint の設定
