@@ -126,8 +126,13 @@ extern box std.text.split @"文字列を区切り文字で分割する" {
   perm none
 
   test "カンマで分割" {
-    given { s: "a,b,c", sep: "," }
-    expect { parts: ["a", "b", "c"] }
+    given {
+      s: "a,b,c",
+      sep: ","
+    }
+    expect {
+      parts: ["a", "b", "c"]
+    }
   }
 
   impl builtin "text.split"
@@ -140,13 +145,23 @@ extern box std.text.parse_int @"文字列を整数として読む" {
   perm none
 
   test "数字なら読める" {
-    given { s: " 42 " }
-    expect { ok: true, value: 42 }
+    given {
+      s: " 42 "
+    }
+    expect {
+      ok: true,
+      value: 42
+    }
   }
 
   test "数字でなければ失敗" {
-    given { s: "abc" }
-    expect { ok: false, value: 0 }
+    given {
+      s: "abc"
+    }
+    expect {
+      ok: false,
+      value: 0
+    }
   }
 
   impl builtin "text.parse_int"

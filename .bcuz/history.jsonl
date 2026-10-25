@@ -113,3 +113,16 @@
 {"v":1,"ts":"2026-10-25T05:20:11.638Z","why":"[M1-3] のコミットの前に、テープに無い変更が無いか確かめる","cmd":["srwr","tapes","check"],"dir":".","exit":1,"ms":9}
 {"v":1,"ts":"2026-10-25T05:20:16.491Z","why":"[M1-3] のコミットに入れるため、テープを閉じて圧縮する","cmd":["srwr","tapes","new"],"dir":".","exit":0,"ms":20}
 {"v":1,"ts":"2026-10-25T05:20:16.651Z","why":"[M1-3] のコミットに入るものを確かめる","cmd":["git","status","--short"],"dir":".","exit":0,"ms":2}
+{"v":1,"ts":"2026-10-25T05:20:21.294Z","why":"[M1-3] の変更・記録・テープをコミット対象にする","cmd":["git","add",".bcuz/history.jsonl",".mtqg/journal.jsonl",".srwr/tapes",".crube/structure_ja.txt",".claude/rules/testing.md","docs/reference/language.md","internal/syntax/ast.go","internal/syntax/parser.go","internal/syntax/parser_test.go"],"dir":".","exit":0,"ms":5}
+{"v":1,"ts":"2026-10-25T05:20:21.476Z","why":"コミットの前に作者の設定を確かめる","cmd":["git","config","user.email"],"dir":".","exit":0,"ms":1}
+{"v":1,"ts":"2026-10-25T05:26:45.057Z","why":"正規形の決まりと fmt コマンドの説明を読み直す","cmd":["grep","-n","fmt\\|正規形","docs/reference/cli.md","docs/reference/language.md","docs/design/mvp.md"],"dir":".","exit":0,"ms":1}
+{"v":1,"ts":"2026-10-25T06:49:44.387Z","why":"AskUserQuestion での人間の答えを、人間の名で記録する","cmd":["env","MTQG_AUTHOR_KIND=human","MTQG_AUTHOR_NAME=amisonnet8","mtqg","q","add","50b1ae0687","(1) given/expect は1ポート1行、stub は1行 { now: … }（AskUserQuestion で選択。AI が代わりに記録）"],"dir":".","exit":0,"ms":4}
+{"v":1,"ts":"2026-10-25T06:51:36.973Z","why":"printer のテストを書いたあと、表の形の行を整形する","cmd":["qsoku","fmt"],"dir":".","exit":0,"ms":127}
+{"v":1,"ts":"2026-10-25T06:51:37.261Z","why":"printer とテストを書いたあとの最初の確認","cmd":["qsoku","check"],"dir":".","exit":0,"ms":764}
+{"v":1,"ts":"2026-10-25T06:51:44.422Z","why":"srwr の引数で \\u のエスケープが本物の文字に化けていないか確かめる","cmd":["grep","-nP","[\\x{2028}\\x{2029}\\x{200D}\\x{0301}\\x{FEFF}\\x{0000}-\\x{0008}\\x{007F}-\\x{009F}]","internal/syntax/printer.go","internal/syntax/printer_test.go","docs/reference/cli.md","docs/reference/std.md"],"dir":".","exit":1,"ms":1}
+{"v":1,"ts":"2026-10-25T06:51:44.556Z","why":"壊して確かめる写しを作る","cmd":["sh","-c","rm -rf \"$TMPDIR/mut\" && mkdir -p \"$TMPDIR/mut/repo\" && git ls-files -z --cached --others --exclude-standard | xargs -0 tar -cf - --ignore-failed-read | tar -x -C \"$TMPDIR/mut/repo\" && go -C .claude/skills/mutation-check/mutants build -o \"$TMPDIR/mut/mutants\" ."],"dir":".","exit":0,"ms":173}
+{"v":1,"ts":"2026-10-25T06:51:49.257Z","why":"構文の変異を、パッケージ自身のテストが捕まえるか確かめる","cmd":["sh","-c","cd \"$TMPDIR/mut/repo\" && nice -n 19 \"$TMPDIR/mut/mutants\" -file internal/syntax/printer.go -- go test -count=1 ./internal/syntax/ > \"$TMPDIR/mut/syntax.log\" 2>&1; grep -v \"^killed\" \"$TMPDIR/mut/syntax.log\"; grep -c \"^killed\" \"$TMPDIR/mut/syntax.log\""],"dir":".","exit":0,"ms":24162}
+{"v":1,"ts":"2026-10-25T06:52:31.801Z","why":"[M1-4] のコミットの前に、説明の漏れを確かめる","cmd":["env","CRUBE_LANG=ja","crube","status","--require","all"],"dir":".","exit":0,"ms":5}
+{"v":1,"ts":"2026-10-25T06:52:31.984Z","why":"[M1-4] のコミットの前に、テープに無い変更が無いか確かめる","cmd":["srwr","tapes","check"],"dir":".","exit":1,"ms":9}
+{"v":1,"ts":"2026-10-25T06:52:36.452Z","why":"[M1-4] のコミットに入れるため、テープを閉じて圧縮する","cmd":["srwr","tapes","new"],"dir":".","exit":0,"ms":12}
+{"v":1,"ts":"2026-10-25T06:52:36.643Z","why":"[M1-4] のコミットに入るものを確かめる","cmd":["git","status","--short"],"dir":".","exit":0,"ms":4}

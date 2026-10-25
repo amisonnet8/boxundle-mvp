@@ -76,6 +76,10 @@ internal/	このモジュールの中だけで使うパッケージ
 			| 文法は language.md §3 と std.md §2。演算名の一覧（IsOp）を持ち、引数の並びの中のノードIDが次のノードの始まりかを見分けるのに使う。利用者のファイルの extern（BX070）は、ここでは誤りにせず check が返す。
 		parser_test.go	パーサのテスト。docs の例と std.md の宣言の例を読み、木を文字列にして手で書いた期待値と比べる
 			| dump（木を1行の文字列にする）と stripSpans（span を消して比べる）を持つ。printer のテスト（[M1-4]）でも使える。誤りの位置の期待値は、別の道具（Python で字句を切り出す）で確かめてから書いた。
+		printer.go	AST を正規形のテキストにする printer（Print。boxundle fmt が使う）
+			| 決まりは cli.md §2。字句の並びを変えずに書くので parse(print(ast)) == ast が成り立つ。文字列の書き出し（quote）は、制御文字と U+2028・U+2029 を 16 進数4桁のエスケープにする。
+		printer_test.go	printer のテストと M1 の受け入れテスト。docs の例を fmt にかけても1バイトも変わらないこと、parse(print(ast)) == ast、冪等
+			| 期待値は人間が書いた docs の例（order.bx・checkout.bx・std.md の宣言の例）と、cli.md §2 から手で書いた正規形。quote は、すべての文字を字句解析で読み戻して確かめる。
 .gitattributes	改行（すべて LF）と、記録のファイルの merge=union
 .gitignore	git に入れないもの。ルート直下のドットで始まる名前は許可リスト方式
 .golangci.yaml	golangci-lint の設定
