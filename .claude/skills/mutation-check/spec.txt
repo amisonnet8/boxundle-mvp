@@ -54,6 +54,35 @@
 診断: check の診断を列の順に並べない | internal/check/check.go | cmp.Compare(a.Span.Start.Col, b.Span.Start.Col), | 0,
 診断: check の診断をファイルの順に並べない | internal/check/check.go | cmp.Compare(a.Span.File, b.Span.File), | 0,
 
+# ID とスコープ（language.md §4.2）
+ID: ノードIDの重複を許す | internal/check/scope.go | if first := s.all[id]; len(first) > 0 { | if first := s.all[id]; false {
+ID: route・match の2つ目からの分岐を確かめない | internal/check/scope.go | for i, br := range n.Branches { | for i, br := range n.Branches[:min(1, len(n.Branches))] {
+ID: 深いIDを許す | internal/check/scope.go | len(segs) != len(parent)+1 || !slices.Equal | len(segs) < len(parent)+1 || !slices.Equal
+ID: 接頭辞を確かめない | internal/check/scope.go |  || !slices.Equal(segs[:len(parent)], parent) { |  {
+ID: 子を、親の書かれたIDでなく規則どおりのIDに合わせる | internal/check/scope.go | s.ids(inner, segs) | s.ids(inner, append(slices.Clip(parent), segs[len(segs)-1]))
+スコープ: 箱のどこかにあるノードなら参照を許す | internal/check/scope.go | if n := s.lookupNode(r.ID); n != nil { | if n := s.lookupNode(r.ID); n != nil || len(s.all[r.ID]) > 0 {
+スコープ: 自分自身の参照を許す | internal/check/scope.go | ⇥⇥⇥s.node(st)⏎⇥⇥⇥if fr.nodes[st.ID.Name] == nil {⏎⇥⇥⇥⇥fr.nodes[st.ID.Name] = st⏎⇥⇥⇥} | ⇥⇥⇥if fr.nodes[st.ID.Name] == nil {⏎⇥⇥⇥⇥fr.nodes[st.ID.Name] = st⏎⇥⇥⇥}⏎⇥⇥⇥s.node(st)
+スコープ: 祖先のブロックのノードを見ない | internal/check/scope.go | for _, fr := range slices.Backward(s.frames) {⏎⇥⇥if n := fr.nodes[id] | for _, fr := range s.frames[len(s.frames)-1:] {⏎⇥⇥if n := fr.nodes[id]
+スコープ: ブロックを出ても、中のノードと束縛子が見える | internal/check/scope.go | ⇥}⏎⇥s.frames = s.frames[:len(s.frames)-1]⏎} | ⇥}⏎}
+スコープ: 前方参照を、見えないブロックの中と知らせる | internal/check/scope.go | case before(r.Span.Start, defs[0].Span.Start): | case false:
+スコープ: 自分を含むノードの参照を、見えないブロックの中と知らせる | internal/check/scope.go | case slices.ContainsFunc(defs, | case false && slices.ContainsFunc(defs,
+スコープ: 構築の中の参照を確かめない | internal/check/scope.go | for _, x := range e.Elems {⏎⇥⇥⇥s.expr(x) | for _, x := range e.Elems {⏎⇥⇥⇥_ = x
+スコープ: マップの値の参照を確かめない | internal/check/scope.go | s.expr(m.Value) | _ = m.Value
+スコープ: 型注釈の中の参照を確かめない | internal/check/scope.go | case *syntax.Annotated:⏎⇥⇥s.expr(e.Value) | case *syntax.Annotated:⏎⇥⇥_ = e.Value
+スコープ: call の引数の参照を確かめない | internal/check/scope.go | for _, a := range n.CallArgs {⏎⇥⇥s.expr(a.Value) | for _, a := range n.CallArgs {⏎⇥⇥_ = a.Value
+スコープ: emit の値の参照を確かめない | internal/check/scope.go | s.emitPort(st.Port)⏎⇥⇥⇥s.expr(st.Value) | s.emitPort(st.Port)
+スコープ: 診断のノードを、いちばん外のノードにする | internal/check/scope.go | d.Node = s.owners[len(s.owners)-1].ID.Name | d.Node = s.owners[0].ID.Name
+スコープ: 出力ポートの参照を許す | internal/check/scope.go | if slices.Contains(s.box.Outs, p) { | if false {
+スコープ: emit の対象に入力ポートを許す | internal/check/scope.go | if slices.ContainsFunc(s.box.Outs, isName) {⏎⇥⇥return | if slices.ContainsFunc(slices.Concat(s.box.Ins, s.box.Outs), isName) {⏎⇥⇥return
+スコープ: 未定義の $名前 に候補を出さない | internal/check/scope.go | d.Suggestions = suggest(r.Name, names) | d.Suggestions = suggest(r.Name, nil)
+スコープ: $名前 の候補に出力ポートを入れる | internal/check/scope.go | for _, p := range s.box.Ins {⏎⇥⇥names = append | for _, p := range slices.Concat(s.box.Ins, s.box.Outs) {⏎⇥⇥names = append
+スコープ: $名前 の候補に束縛子を入れない | internal/check/scope.go | for name := range fr.binders {⏎⇥⇥⇥names = append(names, name) | for name := range fr.binders {⏎⇥⇥⇥_ = name
+スコープ: emit の対象の候補を出さない | internal/check/scope.go | d.Suggestions = suggest(name, names) | _ = names
+シャドーイング: ポート名の重なりを許す | internal/check/scope.go | if first := s.ports[name]; first != nil { | if first := s.ports[name]; false {
+シャドーイング: 同じブロックの束縛子の重なりを許す | internal/check/scope.go | case fr.binders[name] != nil: | case false:
+シャドーイング: 束縛子とポートの重なりを許す | internal/check/scope.go | case s.ports[name] != nil: | case false:
+シャドーイング: 束縛子と外側の束縛子の重なりを許す | internal/check/scope.go | case s.lookupBinder(name) != nil: | case false:
+
 # 標準の箱の宣言（std.md。internal/std/registry_test.go が std.md と突き合わせる）
 std: ポートの型が std.md と違う | internal/std/decl/text.bx | out $parts : [Str] | out $parts : Str
 std: ポートの名前が std.md と違う | internal/std/decl/random.bx | out $id : Str | out $uid : Str

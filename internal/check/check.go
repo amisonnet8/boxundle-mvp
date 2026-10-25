@@ -13,12 +13,14 @@ import (
 
 // checker は、1回の検証の状態。
 type checker struct {
-	diags     []diag.Diagnostic
-	defs      map[string]*typeDef // 登録した型定義（標準の箱の宣言とモジュール）
-	order     []*typeDef          // 登録した型定義の、書かれた順（標準の箱の宣言が先）
-	extra     []*typeDef          // 登録しなかった型定義（重複など）。右辺の誤りだけを確かめる
-	env       *types.Env
-	portTypes map[*syntax.Port]types.Type
+	diags      []diag.Diagnostic
+	defs       map[string]*typeDef // 登録した型定義（標準の箱の宣言とモジュール）
+	order      []*typeDef          // 登録した型定義の、書かれた順（標準の箱の宣言が先）
+	extra      []*typeDef          // 登録しなかった型定義（重複など）。右辺の誤りだけを確かめる
+	env        *types.Env
+	portTypes  map[*syntax.Port]types.Type
+	nodeRefs   map[*syntax.NodeRef]*syntax.Node // ノードの参照が結び付いたノード
+	dollarRefs map[*syntax.DollarRef]binding    // $名前 の参照が結び付いたポート・束縛子
 }
 
 // Check は、モジュール f を、標準の箱の宣言 std とともに検証し、診断をソースの位置の順に返す。
@@ -35,6 +37,7 @@ func checkModule(f *syntax.File, std []*syntax.File) *checker {
 	c.boxNames(f)
 	c.typeDefs()
 	c.ports([]*syntax.File{f})
+	c.scopes(f)
 	return c
 }
 
@@ -48,7 +51,12 @@ func CheckStd(std []*syntax.File) []diag.Diagnostic {
 }
 
 func newChecker() *checker {
-	return &checker{defs: map[string]*typeDef{}, portTypes: map[*syntax.Port]types.Type{}}
+	return &checker{
+		defs:       map[string]*typeDef{},
+		portTypes:  map[*syntax.Port]types.Type{},
+		nodeRefs:   map[*syntax.NodeRef]*syntax.Node{},
+		dollarRefs: map[*syntax.DollarRef]binding{},
+	}
 }
 
 // report は、診断を1つ足す。戻り値は、足した診断にヒント・候補を書き足すときだけ使う
