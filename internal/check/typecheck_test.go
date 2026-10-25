@@ -154,12 +154,14 @@ func TestTypecheckOpArgs(t *testing.T) {
 		{"#1 route $b", "エラー BX021  箱 T  ノード #1\n  route に true の分岐がありません\n  位置: t.bx:23:8\n" +
 			"\nエラー BX021  箱 T  ノード #1\n  route に false の分岐がありません\n  位置: t.bx:23:8\n", "?"},
 		{route, "エラー BX021  箱 T  ノード #1\n  route に false の分岐がありません\n  位置: t.bx:23:8\n", "Int"},
-		{mixed, "", "?"},
-		{emptyBranch, "", "?"},
+		{mixed, "エラー BX032  箱 T  ノード #1\n  route の分岐に、値で終わる分岐（true）と emit で終わる分岐（false）が混ざっています\n  位置: t.bx:23:8\n" +
+			"  ヒント: どの分岐も値で終わるか、どの分岐も emit で終わるように揃えてください\n", "?"},
+		{emptyBranch, "エラー BX021  箱 T  ノード #1\n  route の true の分岐のブロックが空です\n  位置: t.bx:24:7\n", "?"},
 		{"#1 val [[], [1]]", "エラー BX024  箱 T  ノード #1\n  空のリストの型が決まりません\n  位置: t.bx:23:13\n" + emptyListHint, "[?]"},
 		{"#1 val {\"a\" -> [], \"b\" -> [1]}", "エラー BX024  箱 T  ノード #1\n  空のリストの型が決まりません\n  位置: t.bx:23:20\n" + emptyListHint, "{Str -> ?}"},
 		{block("filter", "$xs", "val $e") + "\n    emit $r \"x\"",
-			bad("#1.1", "24:7", "filter のブロックの値", "Bool", "Int") + "\n" + bad("", "26:13", "emit $r の値", "Int", "Str"), "[Int]"},
+			bad("#1.1", "24:7", "filter のブロックの値", "Bool", "Int") + "\n" + bad("", "26:13", "emit $r の値", "Int", "Str") +
+				"\nエラー BX030  箱 T  $r\n  出力ポート $r は、この経路ですでに emit されています\n  位置: t.bx:27:5\n  ヒント: 最初の emit は 26:5 にあります\n", "[Int]"},
 		{"#1 sum $nothing", "エラー BX013  箱 T  ノード #1  $nothing\n  ポート・束縛子 $nothing はありません\n  位置: t.bx:23:12\n", "?"},
 		{"#1 div $nothing 1.0", "エラー BX013  箱 T  ノード #1  $nothing\n  ポート・束縛子 $nothing はありません\n  位置: t.bx:23:12\n", "?"},
 		{"#1 map $xs as $e {\n    }", "エラー BX021  箱 T  ノード #1\n  map のブロックが空です\n  位置: t.bx:23:8\n", "?"},

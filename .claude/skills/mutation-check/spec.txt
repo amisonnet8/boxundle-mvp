@@ -105,8 +105,35 @@ ID: 子を、親の書かれたIDでなく規則どおりのIDに合わせる | 
 型検査: 存在しないフィールドに候補を出さない | internal/check/typecheck.go | d.Suggestions = suggest(name, names)⏎⇥return d | _ = names⏎⇥return d
 call: 入力ポートの不足を許す | internal/check/typecheck.go | if len(missing) > 0 {⏎⇥⇥_ = t.report(diag.BX040 | if false {⏎⇥⇥_ = t.report(diag.BX040
 call: 入力ポートの型を確かめない | internal/check/typecheck.go | t.expect(a.Value, t.c.portTypes[box.Ins[i]], callee+" のポート "+name+" ") | t.expr(a.Value, t.c.portTypes[box.Ins[i]])
-call: 箱の名前の候補に標準の箱を入れない | internal/check/typecheck.go | c.boxList = append(c.boxList, b.Name.Name) | if file == f { c.boxList = append(c.boxList, b.Name.Name) }
+call: 箱の名前の候補に標準の箱を入れない | internal/check/typecheck.go | c.boxList = append(c.boxList, b.Name.Name) | if !strings.HasPrefix(b.Name.Name, "std.") { c.boxList = append(c.boxList, b.Name.Name) }
 call: 箱の名前の重複を許す | internal/check/typecheck.go | if first := c.boxes[b.Name.Name]; first != nil { | if first := c.boxes[b.Name.Name]; false {
+
+# 分岐と出力・テストの値（language.md §4.3・§4.4・§4.7）
+分岐: 値の分岐と出口の分岐の混在を値の分岐とみなす | internal/check/emits.go | k = mixedBranch | k = valueBranch
+分岐: 混在を知らせない | internal/check/emits.go | case mixedBranch: | case -1:
+分岐: 混在の箱でも出力の網羅を確かめる | internal/check/emits.go | 揃えてください"⏎⇥⇥fl.unsure = true | 揃えてください"
+分岐: 空の分岐のある箱でも出力の網羅を確かめる | internal/check/emits.go | case unsureBranch:⏎⇥⇥fl.unsure = true | case unsureBranch:
+分岐: 最後が出口の分岐のブロックを、値で終わるとみなす | internal/check/emits.go | case exitBranch:⏎⇥⇥return exitBranch | case exitBranch:⏎⇥⇥return valueBranch
+分岐: 空の分岐のブロックを知らせない | internal/check/typecheck.go | if len(br.Block.Stmts) == 0 { | if false {
+emit: map などのブロックの中の emit を許す | internal/check/emits.go | fl.block(n.Block, false) | fl.block(n.Block, true)
+emit: 値の分岐の中の emit を許す | internal/check/emits.go | fl.block(br.Block, fl.blockKind(br.Block) == exitBranch) | fl.block(br.Block, true)
+emit: 出口の分岐の後ろに文を書ける | internal/check/emits.go | case !last: | case false:
+emit: 出口の分岐を map などのブロックの中に置ける | internal/check/emits.go | case !exits: | case false:
+emit: 分岐ごとに経路を分けない | internal/check/emits.go | append([]*syntax.Emit(nil), firsts...) | firsts
+emit: 2回目の emit を許す | internal/check/emits.go | case firsts[i] != nil: | case false:
+emit: 足りない emit を知らせない | internal/check/emits.go | if firsts[i] != nil || fl.misplaced[name] { | if firsts[i] != nil || true {
+emit: 位置の誤った emit しかないポートにも、足りない emit を重ねる | internal/check/emits.go | fl.misplaced[st.Port.Name] = true | 
+テスト: ポートの不足を許す | internal/check/testvalues.go | if len(missing) > 0 { | if false {
+テスト: 未知のポートを許す | internal/check/testvalues.go | case i < 0: | case false:
+テスト: ポートの重なりを許す | internal/check/testvalues.go | case seen[name]: | case false:
+テスト: 値の型を確かめない | internal/check/testvalues.go | t.expect(f.Value, t.c.portTypes[ports[i]], "テスト「"+tn+"」の "+where+"の "+name+" ") | t.expr(f.Value, t.c.portTypes[ports[i]])
+テスト: 入れ子の型の不一致を BX020 のままにする | internal/check/typecheck.go | if t.test && code == diag.BX020 { | if false && code == diag.BX020 {
+テスト: 同じ箱のスタブの重なりを許す | internal/check/testvalues.go | case seen[name] != nil: | case false:
+テスト: スタブの出力を確かめない | internal/check/testvalues.go | t.testPorts(test, name+" のスタブ", s.Outputs, callee.Outs, "出力") | 
+テスト: expect を入力ポートと突き合わせる | internal/check/testvalues.go | test.Expect, b.Outs | test.Expect, b.Ins
+テスト: 標準の箱の宣言のテストの値を確かめない | internal/check/check.go | c.testValues(std) | 
+テスト: モジュールのテストの値を確かめない | internal/check/check.go | c.testValues([]*syntax.File{f}) | 
+分岐: モジュールの分岐と出力を確かめない | internal/check/check.go | c.flows(f) | 
 
 # 標準の箱の宣言（std.md。internal/std/registry_test.go が std.md と突き合わせる）
 std: ポートの型が std.md と違う | internal/std/decl/text.bx | out $parts : [Str] | out $parts : Str

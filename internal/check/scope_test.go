@@ -76,7 +76,8 @@ func TestCheckScope(t *testing.T) {
 			"エラー BX013  箱 B  ノード #2  $e\n  ポート・束縛子 $e はありません\n  位置: t.bx:12:12\n"},
 		{"emit の対象は出力ポート",
 			scopeSrc("    emit $count 1\n    emit $reslt 1\n"),
-			"エラー BX013  箱 B  $count\n  出力ポート $count はありません\n  位置: t.bx:9:10\n  ヒント: $count は入力ポートです。emit できるのは出力ポートだけです\n" +
+			"エラー BX030  箱 B  $result\n  出力ポート $result が emit されていません\n  位置: t.bx:6:7\n" + onceHint +
+				"\nエラー BX013  箱 B  $count\n  出力ポート $count はありません\n  位置: t.bx:9:10\n  ヒント: $count は入力ポートです。emit できるのは出力ポートだけです\n" +
 				"\nエラー BX013  箱 B  $reslt\n  出力ポート $reslt はありません\n  位置: t.bx:10:10\n  候補: result\n"},
 		{"ポート名の重複",
 			"module m\n\nbox B @\"x\" {\n  in $a : Int\n  out $a : Int\n  perm none\n  body {\n    emit $a 1\n  }\n}\n",

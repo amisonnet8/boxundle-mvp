@@ -44,10 +44,10 @@ func opNames() []string {
 	return names
 }
 
-// collectBoxes は、呼び出せる箱（標準の箱と、モジュールの箱）を登録する。箱の名前の重複は BX042（最初の箱を使う）。
+// collectBoxes は、呼び出せる箱（標準の箱と、モジュールの箱）を、files の順に登録する。箱の名前の重複は BX042（最初の箱を使う）。
 // モジュールの箱の名前は std で始まらない（BX005）ので、標準の箱とは重ならない。
-func (c *checker) collectBoxes(std []*syntax.File, f *syntax.File) {
-	for _, file := range append(slices.Clip(std), f) {
+func (c *checker) collectBoxes(files []*syntax.File) {
+	for _, file := range files {
 		for _, decl := range file.Decls {
 			b, ok := decl.(*syntax.Box)
 			if !ok {
@@ -69,6 +69,7 @@ type typer struct {
 	c      *checker
 	box    *syntax.Box
 	owners []*syntax.Node // 今いるノード（外から順）
+	test   bool           // テストの値を確かめている（型の不一致を BX060 にする）
 }
 
 // typecheck は、モジュールの箱ごとに、本体のノードの型を決めて確かめる。
@@ -82,6 +83,9 @@ func (c *checker) typecheck(f *syntax.File) {
 }
 
 func (t *typer) report(code diag.Code, span diag.Span, format string, args ...any) *diag.Diagnostic {
+	if t.test && code == diag.BX020 {
+		code = diag.BX060
+	}
 	d := t.c.report(code, span, t.box.Name.Name, format, args...)
 	if len(t.owners) > 0 {
 		d.Node = t.owners[len(t.owners)-1].ID.Name
@@ -558,12 +562,15 @@ func memberNames(u *types.Union) []string {
 
 // branchValues は、分岐のブロックを型検査し、分岐ノードの値の型を返す。
 // 値の分岐（どの分岐も値で終わる）なら、分岐の値の型が一致すること（want があれば、want に渡せること）。
-// 出口の分岐と混在は、値を持たない（types.Invalid。分岐の種類は emits.go が確かめる）。
+// 出口の分岐と混在は、値を持たない（types.Invalid。分岐の種類は emits.go が確かめる）。空の分岐のブロックは BX021。
 func (t *typer) branchValues(n *syntax.Node, want types.Type) types.Type {
 	what := n.Op.Name + " の分岐の値"
 	vals := make([]types.Type, len(n.Branches))
 	exit := false
 	for i, br := range n.Branches {
+		if len(br.Block.Stmts) == 0 {
+			_ = t.report(diag.BX021, br.Cond.Span, "%s の %s の分岐のブロックが空です", n.Op.Name, br.Cond.Name)
+		}
 		vals[i] = t.block(br.Block, want, what)
 		if lastNode(br.Block) == nil {
 			exit = true

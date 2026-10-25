@@ -98,6 +98,10 @@ internal/	このモジュールの中だけで使うパッケージ
 		scope_test.go	ID とスコープの検証のテスト（診断の全文と、参照の結び付き）
 		typecheck.go	型検査（BX020〜BX024・BX040・BX042）。ノードをテキスト順に1回たどり、ノードと束縛子の型を決める
 		typecheck_test.go	型検査のテスト（全演算の結果の型と、誤りごとの診断の全文）
+		emits.go	分岐の種類（BX032）・emit と出口の分岐の位置（BX031）・全経路でちょうど1回の emit（BX030）の検証
+		emits_test.go	分岐と出力の検証（BX030〜BX032）のテスト
+		testvalues.go	テストの given・expect とスタブの出力の、ポートの過不足と型の検証（BX060）
+		testvalues_test.go	テストの値とスタブの検証（BX060）のテスト
 	types/	型の表現（language.md §4.1）と、型名から型を引く表
 		| 別名は解いたあとの形で持ち、タグを持つのは名前付きレコード型だけ。誤りのある型は Invalid にして、診断を重ねない。単一化・ユニオンへの注入は M2-3 で足す。
 		types.go	型（Basic・List・Map・Record・Union・Invalid）、等しさ、書き方、マップのキーに使えるか

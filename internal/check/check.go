@@ -42,9 +42,11 @@ func checkModule(f *syntax.File, std []*syntax.File) *checker {
 	c.typeDefs()
 	c.ports(std)
 	c.ports([]*syntax.File{f})
-	c.collectBoxes(std, f)
+	c.collectBoxes(append(slices.Clip(std), f))
 	c.scopes(f)
 	c.typecheck(f)
+	c.flows(f)
+	c.testValues([]*syntax.File{f})
 	return c
 }
 
@@ -54,6 +56,8 @@ func CheckStd(std []*syntax.File) []diag.Diagnostic {
 	c.collectTypes(std, false)
 	c.typeDefs()
 	c.ports(std)
+	c.collectBoxes(std)
+	c.testValues(std)
 	return c.sorted()
 }
 
