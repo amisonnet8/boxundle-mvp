@@ -24,6 +24,58 @@
 | `boxundle stats PATH [--json]` | §4 の集計 |
 | `boxundle std [NAMESPACE] [--json]` | 標準の箱の一覧 |
 | `boxundle version` | バージョン |
+| `boxundle help` | コマンドの一覧（`-h`・`--help` も同じ） |
+
+### 1.1 引数と使い方の誤り
+
+- フラグは、FILE などの引数の前にも後ろにも書ける（`boxundle fmt --check order.bx` と `boxundle fmt order.bx --check` は同じ）
+- 使い方の誤り（未知のコマンド・フラグ、引数の過不足、一緒に使えないフラグ、指定したファイルが無い・読めない）は、診断のコードを付けず、標準エラー出力に2行を出して終了コード2
+
+```
+$ boxundle fmt
+boxundle: fmt には FILE が1つ要ります
+使い方: boxundle fmt FILE [--check] [--write]
+$ boxundle frobnicate
+boxundle: 未知のコマンド「frobnicate」です
+使い方: boxundle <コマンド> [引数...]（一覧は boxundle help）
+$ boxundle fmt nothing.bx
+boxundle: ファイル「nothing.bx」を読めません（見つかりません）
+使い方: boxundle fmt FILE [--check] [--write]
+```
+
+- 引数なしの `boxundle` は、コマンドの一覧を標準エラー出力に出して終了コード2。`boxundle help`（`-h`・`--help`）は、同じ一覧を標準出力に出して終了コード0
+
+### 1.2 内部の不具合
+
+`boxundle` 自体の不具合（panic）は、最上位で捕まえて `BX-INTERNAL` の診断で報告し、終了コード3。本文は決まった文で、panic の値は報告の手がかりとしてヒントに添える。`--json` を付けたコマンドでは JSON で出す。
+
+```
+エラー BX-INTERNAL
+  boxundle 内部の不具合です（コマンド fmt）
+  ヒント: 不具合として報告してください。詳細: <panic の値>
+```
+
+### 1.3 fmt
+
+- `boxundle fmt FILE` は、正規形（§2）を標準出力に出す。終了コード0
+- `--write` は FILE を正規形で書き換え、何も出さない。終了コード0
+- `--check` は何も書き換えない。正規形なら何も出さず終了コード0、違えば標準エラー出力に `FILE は正規形ではありません` の1行を出して終了コード1
+- `--check` と `--write` は一緒に使えない（使い方の誤り）
+- 構文エラーは `BX001` の診断を標準エラー出力に出し、終了コード1（`--write` でも書き換えない）
+
+```
+$ boxundle fmt order.bx --check
+order.bx は正規形ではありません
+```
+
+### 1.4 version
+
+標準出力に1行。リリースのバイナリと `go install …@v0.1.0` で入れたものは版を出す。手元でビルドしたものは Go が VCS から付ける版（`v0.0.0-日時-コミット`、コミットしていない変更があれば `+dirty`）を出し、版が分からなければ `(devel)` を出す。
+
+```
+$ boxundle version
+boxundle v0.1.0
+```
 
 ## 2. 正規形（fmt）
 

@@ -105,3 +105,11 @@ tools/	プロジェクトを作るための道具（実行ファイルには組�
 		| go run ./tools/licenses <dir> <main パッケージ>。goreleaser がビルドの前に動かす。ライセンスのファイルが無いモジュールがあれば失敗する。
 		main.go	実行ファイルに組み込まれるモジュールを go list -deps で求め、ライセンス文を写す
 		main_test.go	ライセンス文を集める処理のテスト。TestRun はプロジェクトの実行ファイルのテストに書き換える
+cmd/	実行ファイルの main パッケージ
+	boxundle/	CLI の boxundle（配布するバイナリ）
+		| 引数を解いて internal/ か公開 API に渡すだけにする。使い方の誤り・終了コード・BX-INTERNAL は main.go、コマンドごとの処理は <コマンド>.go に置く。見え方は docs/reference/cli.md §1。e2e_test.go はビルドしたバイナリを os/exec で呼ぶ。
+		main.go	入口：コマンドの表、引数の解析、使い方の誤り、一覧、panic の BX-INTERNAL、終了コード
+		fmt.go	boxundle fmt（正規形の出力・--check・--write）と、ファイルを読み書きできない理由
+		version.go	boxundle version（-X main.version で埋めた版、無ければモジュールの版）
+		main_test.go	CLI を同じプロセスで呼ぶテスト（出力の全文と終了コード、BX-INTERNAL、fmt、version）
+		e2e_test.go	ビルドしたバイナリを os/exec で呼ぶ e2e テスト（版の埋め込み、docs の例の fmt）

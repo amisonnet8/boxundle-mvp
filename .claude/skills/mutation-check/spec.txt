@@ -5,3 +5,56 @@
 #
 # 例（crube の一覧から。照合の「完全一致をパターンより優先する」という約束を壊す）：
 # 照合: 完全一致をパターンより優先しない | internal/match/match.go | ⇥⇥if e.Name == exact {⏎⇥⇥⇥return e | ⇥⇥if false && e.Name == exact {⏎⇥⇥⇥return e
+
+# 字句（language.md §2）
+字句: 不正な UTF-8 を受け入れる | internal/syntax/lexer.go | if r == utf8.RuneError && size == 1 { | if false && r == utf8.RuneError && size == 1 {
+字句: 単独の CR を空白として受け入れる | internal/syntax/lexer.go | if l.peek(1) != '\n' {⏎⇥⇥⇥⇥return l.failHere("単独の CR は改行に使えません")⏎⇥⇥⇥} | if l.peek(1) != '\n' {⏎⇥⇥⇥⇥l.advance()⏎⇥⇥⇥⇥continue⏎⇥⇥⇥}
+字句: 全角の空白を空白として受け入れる | internal/syntax/lexer.go | case ' ', '\t', '\n': | case ' ', '\t', '\n', 0x3000:
+字句: ノードIDの数の先頭に0を書ける | internal/syntax/lexer.go | if l.peek(0) == '0' { | if false && l.peek(0) == '0' {
+字句: 数の直後に名前の文字を続けられる | internal/syntax/lexer.go | if err := l.boundary("数"); err != nil { | if err := error(nil); err != nil {
+字句: 16進数4桁のエスケープでサロゲートを書ける | internal/syntax/lexer.go | if 0xD800 <= v && v <= 0xDFFF { | if false {
+字句: 16進数のエスケープが4桁に満たなくてもよい | internal/syntax/lexer.go | if len(hex) != 4 { | if len(hex) == 0 {
+字句: キーワードをポート・束縛子の名前に使える | internal/syntax/lexer.go | if keywords[w] {⏎⇥⇥return Token{}, l.fail(from, "キーワード %s はポート | if false {⏎⇥⇥return Token{}, l.fail(from, "キーワード %s はポート
+字句: キーワードをフィールドの名前に使える | internal/syntax/lexer.go | if keywords[w] {⏎⇥⇥⇥return nil, l.fail(from, "キーワード %s はフィールド | if false {⏎⇥⇥⇥return nil, l.fail(from, "キーワード %s はフィールド
+
+# 構文（language.md §3、std.md §2）
+構文: externs に box を書ける | internal/syntax/parser.go | case isKw(t, "box") && f.Externs: | case false && isKw(t, "box") && f.Externs:
+構文: テストの値に参照を書ける | internal/syntax/parser.go | if ref := findRef(r); ref != nil { | if ref := findRef(r); false && ref != nil {
+構文: 値の位置に {} を空のマップとして書ける | internal/syntax/parser.go | p.next()⏎⇥⇥return nil, p.fail(p.spanFrom(start), "値の位置に {} は書けません | p.next()⏎⇥⇥return &MapLit{Span: p.spanFrom(start)}, nil⏎⇥⇥return nil, p.fail(p.spanFrom(start), "値の位置に {} は書けません
+
+# 正規形（cli.md §2）
+正規形: 数を書かれたとおりに書かない | internal/syntax/printer.go | case *DecLit:⏎⇥⇥return e.Text | case *DecLit:⏎⇥⇥return strings.TrimSuffix(e.Text, "0")
+正規形: 型定義・箱の間に空行を書かない | internal/syntax/printer.go | for _, d := range f.Decls {⏎⇥⇥p.line("") | for _, d := range f.Decls {
+正規形: 最後のテストの後に空行を書かない | internal/syntax/printer.go | if len(b.Tests) > 0 {⏎⇥⇥p.line("") | if false {⏎⇥⇥p.line("")
+正規形: U+007F〜U+009F の制御文字をエスケープしない | internal/syntax/printer.go | case r < 0x20 || (0x7F <= r && r <= 0x9F) || r == 0x2028 || r == 0x2029: | case r < 0x20 || r == 0x2028 || r == 0x2029:
+正規形: U+2028 をエスケープしない | internal/syntax/printer.go | case r < 0x20 || (0x7F <= r && r <= 0x9F) || r == 0x2028 || r == 0x2029: | case r < 0x20 || (0x7F <= r && r <= 0x9F) || r == 0x2029:
+
+# 診断（language.md §6.1）
+診断: BX073 を警告にしない | internal/diag/diag.go | if code == BX073 { | if code == "" {
+診断: 診断が無いとき JSON を [] でなく null にする | internal/diag/diag.go | ds = []Diagnostic{} | ds = nil
+
+# 標準の箱の宣言（std.md。internal/std/registry_test.go が std.md と突き合わせる）
+std: ポートの型が std.md と違う | internal/std/decl/text.bx | out $parts : [Str] | out $parts : Str
+std: ポートの名前が std.md と違う | internal/std/decl/random.bx | out $id : Str | out $uid : Str
+std: ポートの順が std.md と違う | internal/std/decl/fs.bx | in $path : Str⏎  in $text : Str | in $text : Str⏎  in $path : Str
+std: 権限が std.md と違う | internal/std/decl/clock.bx | perm clock⏎  impl builtin "clock.today" | perm random⏎  impl builtin "clock.today"
+std: std.md に無い箱を宣言する | internal/std/decl/env.bx | extern box std.env.get @ | extern box std.env.gets @
+std: std.md の箱が宣言に無い | internal/std/decl/clock.bx | ⏎⏎extern box std.clock.today @"今日の日付を返す" {⏎  out $date : Str⏎  perm clock⏎  impl builtin "clock.today"⏎} | 
+std: 名前空間がファイル名と違う | internal/std/decl/env.bx | externs std.env | externs std.envs
+std: 登録名が箱の名前と違う | internal/std/decl/text.bx | impl builtin "text.join" | impl builtin "text.joins"
+std: 宣言にラベルが無い | internal/std/decl/random.bx |  @"UUID v4 を返す" | 
+std: 作用のない箱にテストが無い | internal/std/decl/date.bx |   test "日曜は6" {⏎    given {⏎      date: "2026-10-25"⏎    }⏎    expect {⏎      weekday: 6⏎    }⏎  }⏎⏎ | 
+std: テストの given が入力のポートと違う | internal/std/decl/text.bx |       sep: "-" |       seq: "-"
+std: テストの expect が出力のポートを欠く | internal/std/decl/text.bx |       ok: false,⏎      value: 0⏎ |       ok: false⏎
+std: 宣言が正規形でない | internal/std/decl/text.bx | perm none⏎⏎  test "カンマで分割" | perm none⏎⏎⏎  test "カンマで分割"
+
+# CLI（cli.md §1）
+CLI: 使い方の誤りを終了コード1にする | cmd/boxundle/main.go | exitUsage    = 2 | exitUsage    = 1
+CLI: 使い方の誤りで使い方の行を出さない | cmd/boxundle/main.go | ⇥_, _ = fmt.Fprintf(c.stderr, "使い方: %s\n", usageLine(c.name, c.cmd))⏎ | 
+CLI: help の一覧を標準エラー出力に出す | cmd/boxundle/main.go | writeHelp(stdout, cmds) | writeHelp(stderr, cmds)
+CLI: panic を BX-INTERNAL で報告しない | cmd/boxundle/main.go | if r := recover(); r != nil { | if r := recover(); r != nil {⏎⇥⇥⇥panic(r)⏎⇥⇥}⏎⇥⇥if r := any(nil); r != nil {
+CLI: ファイルを読めないとき Go のエラー文を出す | cmd/boxundle/fmt.go | 読めません（%s）", file, fileReason(file, err)) | 読めません（%s）", file, err.Error())
+CLI: fmt の --check と --write を一緒に使える | cmd/boxundle/fmt.go | if check && write { | if false {
+CLI: fmt の --check で正規形でなくても終了コード0 | cmd/boxundle/fmt.go | 正規形ではありません\n", file)⏎⇥⇥⇥return exitFailed | 正規形ではありません\n", file)⏎⇥⇥⇥return exitOK
+CLI: fmt の --write で正規形のファイルも書き直す | cmd/boxundle/fmt.go | if bytes.Equal(out, src) {⏎⇥⇥⇥return exitOK | if false {⏎⇥⇥⇥return exitOK
+CLI: version で、埋めた版よりモジュールの版を優先する | cmd/boxundle/version.go | if embedded != "" { | if false {

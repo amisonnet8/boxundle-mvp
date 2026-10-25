@@ -42,8 +42,8 @@
 
 ## 各ファイル・ディレクトリの補足
 
-- **`cmd/boxundle/`**: CLI（まだ置いていない。M1 で最初に置く）。`main.go`は引数を公開APIか`internal/`に渡すだけにする
-- **`tools/licenses/`**: 配布物に同梱する依存のライセンス文を集める（`.claude/rules/distribution.md`）。`go run ./tools/licenses <出力先> <main パッケージ>`。実行ファイルを置いたら、`TestRun`をその実行ファイルの一覧のテストに書き換える
+- **`cmd/boxundle/`**: CLI。`main.go`は、コマンドの表・引数の解析・使い方の誤り・終了コード・panic の`BX-INTERNAL`を受け持ち、コマンドごとの処理は`<コマンド>.go`（`fmt.go`・`version.go`）に置く。どれも引数を公開APIか`internal/`に渡すだけにする。コマンドの表は大域の変数にせず`commands()`が返す（テストが panic するコマンドを渡せるように）。e2e テスト（`e2e_test.go`）は、`-X main.version`を付けてビルドしたバイナリを`os/exec`で呼ぶ
+- **`tools/licenses/`**: 配布物に同梱する依存のライセンス文を集める（`.claude/rules/distribution.md`）。`go run ./tools/licenses <出力先> <main パッケージ>`。`TestRun`は`./cmd/boxundle`に組み込まれるモジュールの一覧のテスト（依存を足す・外すと落ちる）
 - **`.claude/skills/mutation-check/mutants/`**: 変異の道具。`go.mod`を持つ別のモジュールなので、`qsoku check`（`./...`）の対象に入らない。変えたら、そのディレクトリで整形・vet・テストを通す（Skill の「気をつけること」）
 - **`internal/`**: Goの仕組みとして、モジュールの外からimportできない。外へ公開するパッケージは`internal/`に置かない
 - **`go.sum`**: コミットする（改ざん検知・再現可能なビルドのため）

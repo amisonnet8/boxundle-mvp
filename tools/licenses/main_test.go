@@ -51,31 +51,13 @@ func TestLicenseFiles(t *testing.T) {
 	}
 }
 
-// TestRun gathers the licenses of a small module of its own, which has a
-// command and no dependencies: only Go's license comes out.
-//
-// Once the project has a command to release, change this test to gather the
-// licenses of that command (t.Chdir to the module root and run it with
-// "./cmd/<name>"), and list every module it links. When a dependency is added
-// or dropped, that list changes: check the license of the new module, then
-// update the list.
+// TestRun は、配布する ./cmd/boxundle に組み込まれるモジュールのライセンスを集める。
+// 依存を足す・外すと一覧が変わるので、新しいモジュールのライセンスを確かめてから一覧を直す
+// （.claude/rules/distribution.md）。apd/v3 を足したら、その LICENSE も入る。
 func TestRun(t *testing.T) {
-	mod := t.TempDir()
-	for name, body := range map[string]string{
-		"go.mod":            "module example.com/licensestest\n",
-		"cmd/hello/main.go": "package main\n\nimport \"fmt\"\n\nfunc main() { fmt.Println(\"hello\") }\n",
-	} {
-		p := filepath.Join(mod, filepath.FromSlash(name))
-		if err := os.MkdirAll(filepath.Dir(p), 0o755); err != nil {
-			t.Fatal(err)
-		}
-		if err := os.WriteFile(p, []byte(body), 0o644); err != nil {
-			t.Fatal(err)
-		}
-	}
-	t.Chdir(mod)
+	t.Chdir(filepath.Join("..", ".."))
 	dir := t.TempDir()
-	if err := run(dir, "./cmd/hello"); err != nil {
+	if err := run(dir, "./cmd/boxundle"); err != nil {
 		t.Fatal(err)
 	}
 	var got []string

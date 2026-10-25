@@ -11,7 +11,7 @@
 
 実行ファイルを配るときは、テンプレートに入っている`.goreleaser.yaml`・`.github/workflows/release.yml`・`tools/licenses`を使う。見本は crube（https://github.com/amisonnet8/crube ）。
 
-- **始めるとき**：`.goreleaser.yaml`は`boxundle`（`./cmd/boxundle`）に書き換え済み。`cmd/boxundle/`を置いたら、`tools/licenses`の`TestRun`を、`./cmd/boxundle`のライセンスを集めるテストに書き換える（テストのコメント。`apd`を足したら、その`LICENSE`も一覧に入る）。それまでは`qsoku snapshot`とリリースは、作るものが無く失敗する（`goreleaser check`は、GitHub の remote があるリポジトリなら通る）
+- **始めるとき**（済み。[M1-6]）：`.goreleaser.yaml`は`boxundle`（`./cmd/boxundle`）に書き換え済み。`tools/licenses`の`TestRun`は、`./cmd/boxundle`のライセンスを集めるテストに書き換え済み（`apd`を足したら、その`LICENSE`も一覧に入る）
 - **cgo を使わない**（`CGO_ENABLED=0`）。どの OS でも、ほかのライブラリなしに動く
 - 配布物は linux・darwin・windows の amd64・arm64。linux・darwin は`.tar.gz`、windows は`.zip`。名前は`<名前>_<版>_<OS>_<アーキテクチャ>`（版は`v`なし）。`checksums.txt`を添える。アーカイブには、実行ファイル・`LICENSE`・`README.md`・`licenses/`（依存のライセンス文）を入れる
 - **版**：goreleaser が`-X main.version=<タグ>`（`v0.1.0`の形）を埋める。`main`パッケージに`var version string`を置き、空のとき（`go install`で入れたもの）は`runtime/debug.ReadBuildInfo`のモジュールの版を出すと、どちらでも同じ`v0.1.0`になる（crube の`cli.BuildVersion`）
