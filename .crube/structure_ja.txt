@@ -70,6 +70,12 @@ internal/	このモジュールの中だけで使うパッケージ
 	syntax/	構文：字句解析・パーサ・AST・正規形の出力（language.md §2〜§3、cli.md §2）
 		lexer.go	字句解析：ソースをトークン（Token・Kind）に分け、誤りを BX001 で返す
 		lexer_test.go	字句解析のテスト：トークンの種類・位置、例のファイル、BX001 の誤りと位置、識別子の文字
+		ast.go	構文木（AST）の型。ファイル・型定義・箱・ノード・値と型の式。すべて span つき
+			| パーサが作り、検証・実行・正規形の出力が読む。箱のポートは in と out を分けて持つ（正規形は in → out の順に並べ、parse(print(ast)) == ast を保つため）。演算名は文字列のまま持ち、未知の演算かどうかは check が見る。
+		parser.go	手書きの再帰下降のパーサ（Parse）。module と externs の両方を読み、誤りは最初の1つを BX001 で返す
+			| 文法は language.md §3 と std.md §2。演算名の一覧（IsOp）を持ち、引数の並びの中のノードIDが次のノードの始まりかを見分けるのに使う。利用者のファイルの extern（BX070）は、ここでは誤りにせず check が返す。
+		parser_test.go	パーサのテスト。docs の例と std.md の宣言の例を読み、木を文字列にして手で書いた期待値と比べる
+			| dump（木を1行の文字列にする）と stripSpans（span を消して比べる）を持つ。printer のテスト（[M1-4]）でも使える。誤りの位置の期待値は、別の道具（Python で字句を切り出す）で確かめてから書いた。
 .gitattributes	改行（すべて LF）と、記録のファイルの merge=union
 .gitignore	git に入れないもの。ルート直下のドットで始まる名前は許可リスト方式
 .golangci.yaml	golangci-lint の設定
