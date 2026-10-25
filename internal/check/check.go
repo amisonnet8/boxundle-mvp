@@ -47,6 +47,7 @@ func checkModule(f *syntax.File, std []*syntax.File) *checker {
 	c.typecheck(f)
 	c.flows(f)
 	c.testValues([]*syntax.File{f})
+	c.callGraph(f)
 	return c
 }
 
@@ -58,6 +59,7 @@ func CheckStd(std []*syntax.File) []diag.Diagnostic {
 	c.ports(std)
 	c.collectBoxes(std)
 	c.testValues(std)
+	c.stdPerms(std)
 	return c.sorted()
 }
 

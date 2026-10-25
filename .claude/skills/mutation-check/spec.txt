@@ -135,6 +135,20 @@ emit: 位置の誤った emit しかないポートにも、足りない emit �
 テスト: モジュールのテストの値を確かめない | internal/check/check.go | c.testValues([]*syntax.File{f}) | 
 分岐: モジュールの分岐と出力を確かめない | internal/check/check.go | c.flows(f) | 
 
+# 呼び出しグラフと権限（language.md §4.3・§4.6・§4.7）
+呼び出し: 循環を許す | internal/check/callgraph.go | case visiting: | case -1:
+呼び出し: ほかの箱を通した循環を見つけない | internal/check/callgraph.go | case unvisited:⏎⇥⇥⇥⇥visit(next) | case unvisited:
+呼び出し: ブロックの中の call を数えない | internal/check/callgraph.go | calls = append(calls, callNodes(inner)...) | calls = append(calls, callNodes(inner)[:0]...)
+呼び出し: 呼び出しグラフを確かめない | internal/check/check.go | c.callGraph(f) | 
+スタブ: 入れ子を通して呼ばれる箱を対象にできない | internal/check/callgraph.go | if next := c.boxes[name]; next != nil { | if next := c.boxes[name]; next == nil {
+スタブ: 呼ばれない箱を対象にできる | internal/check/callgraph.go | if c.boxes[name] == nil || reached[name] { | if true {
+権限: 未知の権限名を許す | internal/check/callgraph.go | case !slices.Contains(permNames, id.Name): | case false:
+権限: 権限の重なりを許す | internal/check/callgraph.go | case i >= 0: | case false:
+権限: 不足を知らせない | internal/check/callgraph.go | if len(missing) > 0 { | if false {
+権限: 同じ権限の不足を、2つ目の call にも知らせる | internal/check/callgraph.go | if !slices.Contains(permNames, name) || used[name] { | if !slices.Contains(permNames, name) {
+権限: 使っていない権限を知らせない | internal/check/callgraph.go | if !used[id.Name] { | if false {
+権限: 標準の箱の宣言の権限名を確かめない | internal/check/check.go | c.stdPerms(std) | 
+
 # 標準の箱の宣言（std.md。internal/std/registry_test.go が std.md と突き合わせる）
 std: ポートの型が std.md と違う | internal/std/decl/text.bx | out $parts : [Str] | out $parts : Str
 std: ポートの名前が std.md と違う | internal/std/decl/random.bx | out $id : Str | out $uid : Str

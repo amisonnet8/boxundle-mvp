@@ -93,7 +93,8 @@ func TestCheckScope(t *testing.T) {
 				"\nエラー BX015  箱 B  ノード #2.1  $result\n  出力ポート $result は参照できません\n  位置: t.bx:11:19\n" + outHint},
 		{"構築・型注釈・call の引数の中の参照と、分岐の中の emit",
 			scopeSrc("    #1 call B {count: #9, items: [#8]}\n    #2 val {k: {\"a\" -> (#7 : Int)}}\n    #3 val true\n    #4 route #3 {\n      true {\n        emit $result #6\n      }\n      false {\n        emit $result 1\n      }\n    }\n"),
-			"エラー BX012  箱 B  ノード #1  #9\n  ノード #9 はありません\n  位置: t.bx:9:23\n" +
+			"エラー BX041  箱 B  ノード #1\n  箱の呼び出しが循環しています: B → B\n  位置: t.bx:9:13\n" + callCycleHint +
+				"\nエラー BX012  箱 B  ノード #1  #9\n  ノード #9 はありません\n  位置: t.bx:9:23\n" +
 				"\nエラー BX012  箱 B  ノード #1  #8\n  ノード #8 はありません\n  位置: t.bx:9:35\n" +
 				"\nエラー BX012  箱 B  ノード #2  #7\n  ノード #7 はありません\n  位置: t.bx:10:25\n" +
 				"\nエラー BX012  箱 B  ノード #4  #6\n  ノード #6 はありません\n  位置: t.bx:14:22\n"},

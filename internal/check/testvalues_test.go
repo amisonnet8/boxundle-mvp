@@ -8,12 +8,12 @@ import (
 
 // テストの given・expect とスタブの出力は、ポートを過不足なく書き、ポートの型に合わせる（BX060）。
 func TestCheckTestValues(t *testing.T) {
-	src := "module m\n\ntype L = {xs: [Int], n: Int}\n\nbox T @\"x\" {\n  in $i : Int\n  in $l : L\n  out $r : Int\n  out $s : Str\n  perm none\n\n" +
+	src := "module m\n\ntype L = {xs: [Int], n: Int}\n\nbox T @\"x\" {\n  in $i : Int\n  in $l : L\n  out $r : Int\n  out $s : Str\n  perm clock\n\n" +
 		"  test \"正しい\" {\n    stub std.clock.now { now: \"2026-10-25T09:00:00Z\" }\n    given {\n      i: 1,\n      l: L{xs: [], n: 2}\n    }\n    expect {\n      r: 1,\n      s: \"a\"\n    }\n  }\n\n" +
 		"  test \"誤り\" {\n    stub std.clock.nwo { now: \"x\" }\n    stub std.clock.now { at: 2 }\n    stub std.clock.now { now: 1 }\n" +
 		"    given {\n      i: \"1\",\n      l: L{xs: [\"a\"], n: 2},\n      i: 2,\n      j: 3\n    }\n    expect {\n      r: 1\n    }\n  }\n\n" +
 		"  test \"スタブの型\" {\n    stub std.clock.now { now: 1 }\n    given {\n      i: 1,\n      l: L{xs: [1], n: 2}\n    }\n    expect {\n      r: true,\n      s: \"a\"\n    }\n  }\n\n" +
-		"  body {\n    emit $r $i\n    emit $s \"a\"\n  }\n}\n"
+		"  body {\n    #1 call std.clock.now {}\n    emit $r $i\n    emit $s #1.now\n  }\n}\n"
 	want := "エラー BX040  箱 T\n  箱 std.clock.nwo はありません\n  位置: t.bx:25:10\n  候補: std.clock.now\n" +
 		"\nエラー BX060  箱 T\n  テスト「誤り」の std.clock.now のスタブに、出力ポート now がありません\n  位置: t.bx:26:24\n" +
 		"\nエラー BX060  箱 T\n  テスト「誤り」の std.clock.now のスタブに、出力ポート at はありません\n  位置: t.bx:26:26\n" +
