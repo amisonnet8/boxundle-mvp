@@ -40,6 +40,9 @@
   - `internal/syntax/lexer.go`：`peek(0)`を`peek(-1)`にするもの（`for range -1`は1回も回らず、`peek(0)`と同じ）。`peek`の、2文字より先を見る枝の比較と戻り値（呼ぶのは`peek(0)`・`peek(1)`だけで、通らない）。`make([]rune, 0, 4)`の容量。`fail`の`l.off < len(l.src)`の`<`→`<=`（終わりの位置で進まずに誤りを作る道が無い）
   - `internal/syntax/parser.go`：`peek`の、終わりより先を見たときに EOF を返す守り（`i < len(p.toks)`の`<`→`<=`と、`len(p.toks)-1`の数を変えるもの）。2つ先を見るのは1つ先が名前のときだけで、そのとき2つ先は EOF までに収まるので、終わりより先を見る呼び出しが無い。今後の呼び出しで panic しないように残す
   - `cmd/boxundle/main.go`：`writeHelp`の`width := 0`の初期値を変えるもの（±1）。幅は`max(width, len(…))`で、2文字以上あるコマンドの名前のどれかに必ず上書きされるので、初期値が1以下なら結果は同じ
+  - `internal/types/types.go`：`Int Basic = iota + 1`の`+ 1`を変えるもの。ゼロ値の`Basic`をどの型にもしないための守りで、今はゼロ値を作る道が無い。`BasicByName`の、見つからないときに返す値（呼び出し側は`ok`だけを見る）。`Equal`の最後の`return false`（知っている型はすべて`switch`で返り、届かない）
+  - `internal/check/suggest.go`：`distance`の表の長さを1つ増やすもの（`len(rb)+2`）。余った列は、答えに使う`prev[len(rb)]`に影響しない
+  - `internal/check/typedefs.go`：`reportCycle`の`make([]string, 0, len(cycle)+1)`の容量
 
 ## Trivy：既知の脆弱性とライセンス
 

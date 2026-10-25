@@ -172,6 +172,9 @@ boxundle/
       printer.go               # AST → 正規形テキスト（fmt）
     types/                     # 型の表現・単一化・注入
     check/
+      check.go                 # 入口（Check・CheckStd）、診断を位置の順に返す、BX070
+      typedefs.go              # 型定義とポートの型の検証、型の表（types.Env）
+      suggest.go               # 名前の誤りの候補（編集距離2以内）
       scope.go                 # ID規則・スコープ
       typecheck.go
       emits.go                 # 出力の網羅性・分岐の種類

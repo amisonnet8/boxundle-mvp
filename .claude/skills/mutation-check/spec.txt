@@ -33,6 +33,27 @@
 診断: BX073 を警告にしない | internal/diag/diag.go | if code == BX073 { | if code == "" {
 診断: 診断が無いとき JSON を [] でなく null にする | internal/diag/diag.go | ds = []Diagnostic{} | ds = nil
 
+# 型定義の検証（language.md §3 の補足・§4.1・§5 の3。q 6de0817f78）
+型定義: 未定義の型名に候補を付けない | internal/check/typedefs.go | d.Suggestions = suggest(t.Name, c.typeNames()) | d.Suggestions = suggest(t.Name, nil)
+型定義: 候補を編集距離3まで出す | internal/check/suggest.go | const maxSuggestDistance = 2 | const maxSuggestDistance = 3
+型定義: 型定義の循環を見つけない | internal/check/typedefs.go | ⇥⇥⇥⇥c.reportCycle(stack[i:]) | ⇥⇥⇥⇥_ = i
+型定義: 名前付きレコード型の別名を新しいタグにする | internal/check/typedefs.go | ⇥return c.resolve(def.Type, "")⏎} | ⇥t := c.resolve(def.Type, "")⏎⇥if r, ok := t.(*types.Record); ok && r.Name != "" {⏎⇥⇥return &types.Record{Name: def.Name.Name, Fields: r.Fields}⏎⇥}⏎⇥return t⏎}
+型定義: ユニオンに無名レコード型を並べられる | internal/check/typedefs.go | if !isRec || rec.Name == "" { | if !isRec {
+型定義: ユニオンの構成要素の重なりを許す | internal/check/typedefs.go | if slices.Contains(members, rec) { | if false {
+型定義: 型名の重複を許す | internal/check/typedefs.go | case c.defs[name] != nil: | case false:
+型定義: 組み込みの型名を定義できる | internal/check/typedefs.go | case slices.Contains(types.BasicNames(), name): | case false:
+型定義: フィールド名の重複を許す | internal/check/typedefs.go | if slices.ContainsFunc(fs, func(x types.Field) bool { return x.Name == f.Name.Name }) { | if false {
+型定義: マップのキーに Dec を使える | internal/types/types.go | return t == Int || t == Str || t == Bool | return t == Int || t == Str || t == Bool || t == Dec
+型定義: std で始まる名前を大文字小文字を区別せずに禁じる | internal/check/typedefs.go | if module && strings.HasPrefix(name, "std") { | if module && strings.HasPrefix(strings.ToLower(name), "std") {
+型定義: 標準の箱の宣言の型名にも std の決まりを当てる | internal/check/typedefs.go | if module && strings.HasPrefix(name, "std") { | if strings.HasPrefix(name, "std") {
+型定義: std の名前の決まりを箱に当てない | internal/check/typedefs.go | ok && !b.Extern && strings.HasPrefix(b.Name.Name, "std") { | ok && false {
+型定義: 利用者のファイルで extern box を許す | internal/check/check.go | if b, ok := decl.(*syntax.Box); ok && b.Extern { | if b, ok := decl.(*syntax.Box); ok && false {
+型定義: 利用者のファイルで externs を許す | internal/check/check.go | if f.Externs {⏎⇥⇥d := c.report(diag.BX070 | if false {⏎⇥⇥d := c.report(diag.BX070
+型定義: ポートの型を確かめない | internal/check/typedefs.go | c.portTypes[p] = c.resolve(p.Type, b.Name.Name) | _ = p
+診断: check の診断を行の順に並べない | internal/check/check.go | cmp.Compare(a.Span.Start.Line, b.Span.Start.Line), | 0,
+診断: check の診断を列の順に並べない | internal/check/check.go | cmp.Compare(a.Span.Start.Col, b.Span.Start.Col), | 0,
+診断: check の診断をファイルの順に並べない | internal/check/check.go | cmp.Compare(a.Span.File, b.Span.File), | 0,
+
 # 標準の箱の宣言（std.md。internal/std/registry_test.go が std.md と突き合わせる）
 std: ポートの型が std.md と違う | internal/std/decl/text.bx | out $parts : [Str] | out $parts : Str
 std: ポートの名前が std.md と違う | internal/std/decl/random.bx | out $id : Str | out $uid : Str

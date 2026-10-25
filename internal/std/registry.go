@@ -4,6 +4,8 @@ package std
 import (
 	"embed"
 	"path"
+
+	"github.com/amisonnet8/boxundle-mvp/internal/syntax"
 )
 
 //go:embed decl/*.bx
@@ -31,4 +33,22 @@ func DeclFiles() ([]DeclFile, error) {
 		files = append(files, DeclFile{Name: name, Src: src})
 	}
 	return files, nil
+}
+
+// Decls は、組み込んだ宣言を構文解析して、名前の順に返す。
+// 失敗は boxundle 自体の不具合（宣言はテストで構文解析できることを確かめている）。
+func Decls() ([]*syntax.File, error) {
+	files, err := DeclFiles()
+	if err != nil {
+		return nil, err
+	}
+	parsed := make([]*syntax.File, 0, len(files))
+	for _, df := range files {
+		f, err := syntax.Parse(df.Name, df.Src)
+		if err != nil {
+			return nil, err
+		}
+		parsed = append(parsed, f)
+	}
+	return parsed, nil
 }

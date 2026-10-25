@@ -26,6 +26,7 @@ const (
 	BX003      Code = "BX003"
 	BX004      Code = "BX004"
 	BX005      Code = "BX005"
+	BX006      Code = "BX006"
 	BX010      Code = "BX010"
 	BX011      Code = "BX011"
 	BX012      Code = "BX012"
@@ -64,7 +65,7 @@ const (
 // 返すのは毎回新しいスライス。
 func AllCodes() []Code {
 	return []Code{
-		BX001, BX002, BX003, BX004, BX005,
+		BX001, BX002, BX003, BX004, BX005, BX006,
 		BX010, BX011, BX012, BX013, BX014, BX015,
 		BX020, BX021, BX022, BX023, BX024,
 		BX030, BX031, BX032,

@@ -66,6 +66,27 @@ func TestDeclFiles(t *testing.T) {
 	}
 }
 
+// Decls は、DeclFiles と同じ順に、構文解析した宣言を返す。
+func TestDecls(t *testing.T) {
+	files, err := DeclFiles()
+	if err != nil {
+		t.Fatal(err)
+	}
+	decls, err := Decls()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(decls) != len(files) {
+		t.Fatalf("Decls() は %d 件、DeclFiles() は %d 件", len(decls), len(files))
+	}
+	for i, f := range decls {
+		ns := "std." + strings.TrimSuffix(path.Base(files[i].Name), ".bx")
+		if !f.Externs || f.Name.Name != ns || f.Span.File != files[i].Name {
+			t.Errorf("Decls()[%d] = externs %v %s（%s）, want %s（%s）", i, f.Externs, f.Name.Name, f.Span.File, ns, files[i].Name)
+		}
+	}
+}
+
 // 宣言のファイルが構文解析でき、名前空間・箱の名前・登録名がそろい、正規形で書かれている。
 func TestDeclFilesParse(t *testing.T) {
 	files, err := DeclFiles()

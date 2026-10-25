@@ -182,6 +182,9 @@ func labelText(l *LabelLit) string {
 	return " @" + quote(l.Value)
 }
 
+// TypeText は、型の式を正規形の1行で返す（診断の文に入れるため）。
+func TypeText(t Type) string { return typeText(t) }
+
 func typeText(t Type) string {
 	switch t := t.(type) {
 	case *TypeName:
