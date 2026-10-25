@@ -83,6 +83,31 @@ ID: 子を、親の書かれたIDでなく規則どおりのIDに合わせる | 
 シャドーイング: 束縛子とポートの重なりを許す | internal/check/scope.go | case s.ports[name] != nil: | case false:
 シャドーイング: 束縛子と外側の束縛子の重なりを許す | internal/check/scope.go | case s.lookupBinder(name) != nil: | case false:
 
+# 型検査（language.md §3 の補足・§4.1・§4.3。q 7838ebca93）
+型検査: ユニオンへの自動注入を許さない | internal/check/typecheck.go | return isUnion && isRec && r.Name != "" && u.Has(r.Name) | return isUnion && isRec && r.Name != "" && false && u.Has(r.Name)
+型検査: 誤りのある型から診断を重ねて出す | internal/check/typecheck.go | case types.Invalid:⏎⇥⇥return true | case types.Invalid:⏎⇥⇥return false
+型検査: 空の集まりの型を、期待される型から決めない | internal/check/typecheck.go | case isKind(want):⏎⇥⇥return want | case false:⏎⇥⇥return want
+型検査: fold のブロックの値に init の型を期待しない | internal/check/typecheck.go | t.block(n.Block, acc, what) | t.block(n.Block, nil, what)
+型検査: val の引数に期待される型を渡さない | internal/check/typecheck.go | if name == "val" {⏎⇥⇥⇥w = want | if false {⏎⇥⇥⇥w = want
+型検査: 分岐の値に期待される型を渡さない | internal/check/typecheck.go | vals[i] = t.block(br.Block, want, what) | vals[i] = t.block(br.Block, nil, what)
+型検査: 分岐の値の型を比べない | internal/check/typecheck.go | if !assignable(v, first) { | if false {
+型検査: ブロックの値を期待される型と比べない | internal/check/typecheck.go | if w != nil && !assignable(typ, w) { | if false {
+型検査: 空のブロックを許す | internal/check/typecheck.go | case n.Block != nil && len(n.Block.Stmts) == 0: | case false:
+型検査: eq で自動注入を許さない | internal/check/typecheck.go | if !assignable(ts[1], ts[0]) && !assignable(ts[0], ts[1]) { | if !types.Equal(ts[1], ts[0]) {
+型検査: 算術で Int と Dec を混ぜられる | internal/check/typecheck.go | isNum) && t.argTo(n, ts, 1, ts[0]) { | isNum) {
+型検査: 繰り返しの束縛子に要素の型を付けない | internal/check/typecheck.go | t.c.binderTypes[&n.Binders[0]] = elem⏎⇥switch name { | _ = elem⏎⇥switch name {
+型検査: match の網羅を確かめない | internal/check/typecheck.go | if len(missing) > 0 {⏎⇥⇥⇥_ = t.report(diag.BX023 | if false {⏎⇥⇥⇥_ = t.report(diag.BX023
+型検査: match のタグの重なりを許す | internal/check/typecheck.go | case seen[r.Name]:⏎⇥⇥⇥_ = t.report(diag.BX023 | case false:⏎⇥⇥⇥_ = t.report(diag.BX023
+型検査: match の束縛子にタグの型を付けない | internal/check/typecheck.go | t.c.binderTypes[&br.Binder] = bt | _ = bt
+型検査: 構築でフィールドの不足を許す | internal/check/typecheck.go | if len(missing) > 0 {⏎⇥⇥⇥_ = t.report(diag.BX020 | if false {⏎⇥⇥⇥_ = t.report(diag.BX020
+型検査: emit の値を出力ポートの型と比べない | internal/check/typecheck.go | t.expect(e.Value, t.c.portTypes[p], "emit $"+p.Name.Name+" の値") | t.expr(e.Value, t.c.portTypes[p])
+型検査: 未知の演算に候補を出さない | internal/check/typecheck.go | d.Suggestions = suggest(name, opNames()) | d.Suggestions = nil
+型検査: 存在しないフィールドに候補を出さない | internal/check/typecheck.go | d.Suggestions = suggest(name, names)⏎⇥return d | _ = names⏎⇥return d
+call: 入力ポートの不足を許す | internal/check/typecheck.go | if len(missing) > 0 {⏎⇥⇥_ = t.report(diag.BX040 | if false {⏎⇥⇥_ = t.report(diag.BX040
+call: 入力ポートの型を確かめない | internal/check/typecheck.go | t.expect(a.Value, t.c.portTypes[box.Ins[i]], callee+" のポート "+name+" ") | t.expr(a.Value, t.c.portTypes[box.Ins[i]])
+call: 箱の名前の候補に標準の箱を入れない | internal/check/typecheck.go | c.boxList = append(c.boxList, b.Name.Name) | if file == f { c.boxList = append(c.boxList, b.Name.Name) }
+call: 箱の名前の重複を許す | internal/check/typecheck.go | if first := c.boxes[b.Name.Name]; first != nil { | if first := c.boxes[b.Name.Name]; false {
+
 # 標準の箱の宣言（std.md。internal/std/registry_test.go が std.md と突き合わせる）
 std: ポートの型が std.md と違う | internal/std/decl/text.bx | out $parts : [Str] | out $parts : Str
 std: ポートの名前が std.md と違う | internal/std/decl/random.bx | out $id : Str | out $uid : Str

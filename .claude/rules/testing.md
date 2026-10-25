@@ -43,6 +43,7 @@
   - `internal/types/types.go`：`Int Basic = iota + 1`の`+ 1`を変えるもの。ゼロ値の`Basic`をどの型にもしないための守りで、今はゼロ値を作る道が無い。`BasicByName`の、見つからないときに返す値（呼び出し側は`ok`だけを見る）。`Equal`の最後の`return false`（知っている型はすべて`switch`で返り、届かない）
   - `internal/check/suggest.go`：`distance`の表の長さを1つ増やすもの（`len(rb)+2`）。余った列は、答えに使う`prev[len(rb)]`に影響しない
   - `internal/check/typedefs.go`：`reportCycle`の`make([]string, 0, len(cycle)+1)`の容量
+  - `internal/check/typecheck.go`：`add`などと`concat`の`return ts[0]`を`ts[1]`にするもの（2つ目の引数は1つ目の型に渡せると確かめたあとで、算術・Str・リストには自動注入が無いので、2つの型は同じ）。`shape`の「ブロックを取らない演算にブロックがある」枝の`ok = false`（ブロックは`as`の後にしか読めず、束縛子を取らない演算では束縛子の数の誤りが先に`ok = false`にしている）。`match`の`argWhat(n, 0)`の数（引数が1つの演算では、文に番号を入れない）
   - `internal/check/scope.go`：`before`の列の比較`a.Col < b.Col`の`<`→`<=`。参照とノードが同じ位置から始まることは無い（参照はノードの頭の ID より後ろにある）ので、等しい場合が起きない
 
 ## Trivy：既知の脆弱性とライセンス

@@ -2,6 +2,8 @@ package syntax
 
 import (
 	"fmt"
+	"maps"
+	"slices"
 	"strings"
 
 	"github.com/amisonnet8/boxundle-mvp/internal/diag"
@@ -28,6 +30,9 @@ var ops = map[string]bool{
 
 // IsOp は、s が language.md §4.3 の演算名（call を含む）かを返す。
 func IsOp(s string) bool { return ops[s] }
+
+// OpNames は、演算名（call を含む）を名前の順に返す。
+func OpNames() []string { return slices.Sorted(maps.Keys(ops)) }
 
 // Parse は src を構文解析する。モジュール（module）と標準の箱の宣言（externs）の両方を読む。
 // 誤りは最初の1つを BX001 の diag.Diagnostic として返す。

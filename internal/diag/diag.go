@@ -43,6 +43,7 @@ const (
 	BX032      Code = "BX032"
 	BX040      Code = "BX040"
 	BX041      Code = "BX041"
+	BX042      Code = "BX042"
 	BX060      Code = "BX060"
 	BX061      Code = "BX061"
 	BX070      Code = "BX070"
@@ -69,7 +70,7 @@ func AllCodes() []Code {
 		BX010, BX011, BX012, BX013, BX014, BX015,
 		BX020, BX021, BX022, BX023, BX024,
 		BX030, BX031, BX032,
-		BX040, BX041,
+		BX040, BX041, BX042,
 		BX060, BX061,
 		BX070, BX071, BX072, BX073,
 		BXRun001, BXRun002, BXRun003, BXRun010, BXRun020, BXRun021,

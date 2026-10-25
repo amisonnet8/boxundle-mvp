@@ -13,14 +13,18 @@ import (
 
 // checker は、1回の検証の状態。
 type checker struct {
-	diags      []diag.Diagnostic
-	defs       map[string]*typeDef // 登録した型定義（標準の箱の宣言とモジュール）
-	order      []*typeDef          // 登録した型定義の、書かれた順（標準の箱の宣言が先）
-	extra      []*typeDef          // 登録しなかった型定義（重複など）。右辺の誤りだけを確かめる
-	env        *types.Env
-	portTypes  map[*syntax.Port]types.Type
-	nodeRefs   map[*syntax.NodeRef]*syntax.Node // ノードの参照が結び付いたノード
-	dollarRefs map[*syntax.DollarRef]binding    // $名前 の参照が結び付いたポート・束縛子
+	diags       []diag.Diagnostic
+	defs        map[string]*typeDef // 登録した型定義（標準の箱の宣言とモジュール）
+	order       []*typeDef          // 登録した型定義の、書かれた順（標準の箱の宣言が先）
+	extra       []*typeDef          // 登録しなかった型定義（重複など）。右辺の誤りだけを確かめる
+	env         *types.Env
+	portTypes   map[*syntax.Port]types.Type
+	nodeRefs    map[*syntax.NodeRef]*syntax.Node // ノードの参照が結び付いたノード
+	dollarRefs  map[*syntax.DollarRef]binding    // $名前 の参照が結び付いたポート・束縛子
+	nodeTypes   map[*syntax.Node]types.Type      // ノードの値の型（値を持たないノードは types.Invalid）
+	binderTypes map[*syntax.Ident]types.Type     // 束縛子の型
+	boxes       map[string]*syntax.Box           // 呼び出せる箱（標準の箱とモジュールの箱）
+	boxList     []string                         // 呼び出せる箱の名前（候補に使う）
 }
 
 // Check は、モジュール f を、標準の箱の宣言 std とともに検証し、診断をソースの位置の順に返す。
@@ -36,8 +40,11 @@ func checkModule(f *syntax.File, std []*syntax.File) *checker {
 	c.collectTypes([]*syntax.File{f}, true)
 	c.boxNames(f)
 	c.typeDefs()
+	c.ports(std)
 	c.ports([]*syntax.File{f})
+	c.collectBoxes(std, f)
 	c.scopes(f)
+	c.typecheck(f)
 	return c
 }
 
@@ -52,10 +59,13 @@ func CheckStd(std []*syntax.File) []diag.Diagnostic {
 
 func newChecker() *checker {
 	return &checker{
-		defs:       map[string]*typeDef{},
-		portTypes:  map[*syntax.Port]types.Type{},
-		nodeRefs:   map[*syntax.NodeRef]*syntax.Node{},
-		dollarRefs: map[*syntax.DollarRef]binding{},
+		defs:        map[string]*typeDef{},
+		portTypes:   map[*syntax.Port]types.Type{},
+		nodeRefs:    map[*syntax.NodeRef]*syntax.Node{},
+		dollarRefs:  map[*syntax.DollarRef]binding{},
+		nodeTypes:   map[*syntax.Node]types.Type{},
+		binderTypes: map[*syntax.Ident]types.Type{},
+		boxes:       map[string]*syntax.Box{},
 	}
 }
 
