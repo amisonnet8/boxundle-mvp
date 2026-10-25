@@ -78,3 +78,12 @@
 {"v":1,"ts":"2026-10-25T00:25:32.502Z","why":"M1-2 のコミットの前に、テープに無い変更が無いか確かめる","cmd":["srwr","tapes","check"],"dir":".","exit":1,"ms":9}
 {"v":1,"ts":"2026-10-25T00:25:37.086Z","why":"M1-2 のコミットに入れるため、テープを閉じて圧縮する","cmd":["srwr","tapes","new"],"dir":".","exit":0,"ms":19}
 {"v":1,"ts":"2026-10-25T00:25:37.282Z","why":"M1-2 のコミットに入るものを確かめる","cmd":["git","status","--short"],"dir":".","exit":0,"ms":3}
+{"v":1,"ts":"2026-10-25T00:25:42.216Z","why":"M1-2 の変更・記録・テープをコミット対象にする","cmd":["git","add",".bcuz/history.jsonl",".mtqg/journal.jsonl",".srwr/tapes",".crube/structure_ja.txt",".claude/rules/srwr-usage.md",".claude/rules/testing.md","docs/reference/language.md","internal/syntax"],"dir":".","exit":0,"ms":4}
+{"v":1,"ts":"2026-10-25T00:25:46.570Z","why":"M1-2 のステージの結果を確かめる","cmd":["git","status","--short"],"dir":".","exit":0,"ms":3}
+{"v":1,"ts":"2026-10-25T02:08:33.197Z","why":"人間に出した Skill の提案を、質問として残す","cmd":["mtqg","q","add","mutation-check の Skill を、①は変えたファイルだけ・入れ直しは -lines で生き残った行だけに絞り、変異の道具を nice -n 19 で動かす形に直してよいか（全件で PC が重くなったため）"],"dir":".","exit":0,"ms":3}
+{"v":1,"ts":"2026-10-25T02:08:39.212Z","why":"人間の答えを記録する（AIが代筆）","cmd":["env","MTQG_AUTHOR_KIND=human","MTQG_AUTHOR_NAME=amisonnet8","mtqg","q","add","b1586aaef1","提案OK。AIが代筆"],"dir":".","exit":0,"ms":4}
+{"v":1,"ts":"2026-10-25T02:08:39.396Z","why":"答えの出た質問を閉じる","cmd":["mtqg","q","done","b1586aaef1"],"dir":".","exit":0,"ms":3}
+{"v":1,"ts":"2026-10-25T02:08:39.596Z","why":"Skill の変更のコミットの前に、テープに無い変更が無いか確かめる","cmd":["srwr","tapes","check"],"dir":".","exit":0,"ms":9}
+{"v":1,"ts":"2026-10-25T02:08:43.741Z","why":"Skill の変更のコミットの前に、説明の漏れを確かめる","cmd":["env","CRUBE_LANG=ja","crube","status","--require","all"],"dir":".","exit":0,"ms":4}
+{"v":1,"ts":"2026-10-25T02:08:43.925Z","why":"Skill の変更のコミットに入れるため、テープを閉じて圧縮する","cmd":["srwr","tapes","new"],"dir":".","exit":0,"ms":44}
+{"v":1,"ts":"2026-10-25T02:08:47.351Z","why":"Skill の変更のコミットに入るものを確かめる","cmd":["git","status","--short"],"dir":".","exit":0,"ms":3}

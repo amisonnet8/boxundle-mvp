@@ -33,6 +33,12 @@ mutants -spec <一覧> [-only <名前の一部>] -- <テストのコマンド>  
 
 Bashのコマンドは、すべて`bcuz "理由" …`で1つずつ打つ（`.claude/rules/bcuz-usage.md`）。回すのに数分かかるものは、`run_in_background`で走らせ、終わりの知らせを待つ。
 
+**PC を重くしない。** 変異を1つ入れるたびにテストをビルドし直すので、数百件を回すと CPU を使い続け、人間の作業の邪魔になる（[M1-2] で、2ファイル約240件に約10分かかった）。
+
+- 変異の道具は、いつも`nice -n 19`で動かす（下のコマンドはそうしてある）
+- ①は、**その作業で変えたファイルだけ**を回す（`git status --short`で、変えた・足した`.go`のうち`_test.go`でないもの）。全ファイルを回すのは、人間に頼まれたときだけ
+- テストを足したあとの入れ直しは、**生き残った行だけ**を`-lines`で回す（ファイル全体を回し直さない）
+
 1. **写しを作り、道具を建てる。** 作業ツリーでは壊さない（Bashで書き換えると、srwrのテープに理由のない`external`が残り、戻し忘れの心配もある）。写すのは、追跡中のファイルと、無視されない未追跡のファイルの今の中身（コミットしていない変更も入る）。消したがまだコミットしていないファイルは、`--ignore-failed-read`で飛ばす
 
    ```
@@ -43,14 +49,14 @@ Bashのコマンドは、すべて`bcuz "理由" …`で1つずつ打つ（`.cla
 2. **②仕様の変異を、全テストで回す。** 約束を足した・変えたなら、先に`spec.txt`に足す（仕様の約束1つにつき1行。名前は仕様の言葉で書く。「除外したディレクトリの下も調べる」のように）
 
    ```
-   bcuz "仕様の約束をテストが守っているか確かめる" sh -c 'cd "$TMPDIR/mut/repo" && "$TMPDIR/mut/mutants" -spec .claude/skills/mutation-check/spec.txt -- go test -count=1 ./... > "$TMPDIR/mut/spec.log" 2>&1; grep -v "^killed" "$TMPDIR/mut/spec.log"'
+   bcuz "仕様の約束をテストが守っているか確かめる" sh -c 'cd "$TMPDIR/mut/repo" && nice -n 19 "$TMPDIR/mut/mutants" -spec .claude/skills/mutation-check/spec.txt -- go test -count=1 ./... > "$TMPDIR/mut/spec.log" 2>&1; grep -v "^killed" "$TMPDIR/mut/spec.log"'
    ```
 
-3. **①構文の変異を、まずパッケージ自身のテストで回す。** 全ファイルを全テストで回すと遅いので、パッケージのテストで絞ってから、生き残った行だけを全テスト（e2eがあれば、それも含む）で回し直す。CLIの出力の変異は、e2eが捕まえることが多い
+3. **①構文の変異を、今回変えたファイルについて、まずパッケージ自身のテストで回す。** 下の`<変えたファイル>`を、空白で区切ったパスに置き換える（`internal/syntax/lexer.go internal/diag/diag.go`など）。全テストで回すと遅いので、パッケージのテストで絞ってから、生き残った行だけを全テスト（e2eがあれば、それも含む）で回し直す。CLIの出力の変異は、e2eが捕まえることが多い
 
    ```
-   bcuz "構文の変異を、パッケージ自身のテストが捕まえるか確かめる" sh -c 'cd "$TMPDIR/mut/repo" && for f in $(find internal -name "*.go" ! -name "*_test.go" | sort); do "$TMPDIR/mut/mutants" -file $f -- go test -count=1 ./$(dirname $f)/; done > "$TMPDIR/mut/syntax.log" 2>&1; grep -c "^SURVIVED" "$TMPDIR/mut/syntax.log"'
-   bcuz "生き残った行を、全テストで回し直す" sh -c 'cd "$TMPDIR/mut/repo" && for f in $(grep "^SURVIVED" ../syntax.log | cut -d" " -f2 | cut -d: -f1 | sort -u); do "$TMPDIR/mut/mutants" -file $f -lines $(grep "^SURVIVED: $f:" ../syntax.log | cut -d: -f3 | sort -un | paste -sd,) -- go test -count=1 ./...; done > ../syntax2.log 2>&1; grep "^SURVIVED" ../syntax2.log'
+   bcuz "構文の変異を、パッケージ自身のテストが捕まえるか確かめる" sh -c 'cd "$TMPDIR/mut/repo" && for f in <変えたファイル>; do nice -n 19 "$TMPDIR/mut/mutants" -file $f -- go test -count=1 ./$(dirname $f)/; done > "$TMPDIR/mut/syntax.log" 2>&1; grep -c "^SURVIVED" "$TMPDIR/mut/syntax.log"'
+   bcuz "生き残った行を、全テストで回し直す" sh -c 'cd "$TMPDIR/mut/repo" && for f in $(grep "^SURVIVED" ../syntax.log | cut -d" " -f2 | cut -d: -f1 | sort -u); do nice -n 19 "$TMPDIR/mut/mutants" -file $f -lines $(grep "^SURVIVED: $f:" ../syntax.log | cut -d: -f3 | sort -un | paste -sd,) -- go test -count=1 ./...; done > ../syntax2.log 2>&1; grep "^SURVIVED" ../syntax2.log'
    ```
 
 4. **生き残った変異（SURVIVED）を、握りつぶさずに1つずつ読む。** 次のどれかに決める
