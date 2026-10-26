@@ -109,6 +109,12 @@ internal/	このモジュールの中だけで使うパッケージ
 		types.go	型（Basic・List・Map・Record・Union・Invalid）、等しさ、書き方、マップのキーに使えるか
 		env.go	型の表（Env）：組み込みの型名と定義した型名から型を引く。作ったあとは変わらない
 		types_test.go	型の等しさ・書き方・マップのキー・型の表のテスト
+	value/	値の表現・等値と順序・型に導かれた JSON との相互変換
+		| Int（big.Int）・Dec（apd、DecContext は有効桁28・HALF_EVEN）・Bool・Str・List・Map（キー昇順）・Record。値は不変（docs/design/mvp.md §3.1、language.md §4.1・§7.1）
+		value.go	値の型、Equal・Compare、マップの NewMap・Get・Set、DecContext
+		json.go	型に導かれた JSON の読み書き（FromJSON・ToJSON）と、誤りの位置つきの Error
+		value_test.go	等値・順序・マップ・Dec の文脈のテスト
+		json_test.go	JSON の読み書きと誤りの文のテスト
 .gitattributes	改行（すべて LF）と、記録のファイルの merge=union
 .gitignore	git に入れないもの。ルート直下のドットで始まる名前は許可リスト方式
 .golangci.yaml	golangci-lint の設定
@@ -145,3 +151,5 @@ testdata/	テストの入力（公開APIのテストが読む）
 		*.bx	診断を起こす最小の入力（ファイル名がそのコード）
 		*.json	同じ名前の .bx に対して期待する診断の JSON の配列
 boxundle_test.go	公開APIのテスト（testdata/diag の診断、LoadFile・CheckError）
+go.sum	依存モジュールのハッシュ（apd/v3 とそのテストの依存）
+	| go get・go mod tidy が書く。コミットする（改ざん検知・再現できるビルドのため）

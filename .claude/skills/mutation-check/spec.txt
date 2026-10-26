@@ -186,3 +186,28 @@ CLI: check で読めないファイルを飛ばす | cmd/boxundle/check.go | ret
 公開API: 警告だけでも LoadFile が失敗する | boxundle.go | if diag.HasError(ds) { | if len(ds) > 0 {
 公開API: 警告を Warnings に入れない | boxundle.go | Warnings: ds}, nil | }, nil
 公開API: CheckError の件数に警告を数える | boxundle.go | if d.Severity == diag.Error { | if true {
+
+# 値（language.md §4.1・§7.1、mvp.md §3.1）
+値: Dec を数値でなく表記で比べる | internal/value/value.go | return ok && a.V.Cmp(&b.V) == 0 | return ok && a.V.Text('f') == b.V.Text('f')
+値: 無名レコードをフィールドの位置で比べる | internal/value/value.go | bv, ok := b.Field(name) | bv, ok := b.Fields[i], b.Names[i] == name
+値: マップの値を比べない | internal/value/value.go | slices.EqualFunc(a.Keys, b.Keys, Equal) && slices.EqualFunc(a.Vals, b.Vals, Equal) | slices.EqualFunc(a.Keys, b.Keys, Equal)
+値: レコードのタグを比べない | internal/value/value.go | a.Tag != b.Tag || | 
+値: true を false より前にする | internal/value/value.go | case bool(a):⏎⇥⇥⇥⇥return 1 | case bool(a):⏎⇥⇥⇥⇥return -1
+値: マップのキーが重なれば前の値を使う | internal/value/value.go | m.Vals[n-1] = vals[i] | _ = vals[i]
+値: マップの Set が元のマップを書き換える | internal/value/value.go | vals := slices.Clone(m.Vals) | vals := m.Vals
+値: Dec の有効桁を34にする | internal/value/value.go | Precision:   28, | Precision:   34,
+値: Dec の丸めを HALF_UP にする | internal/value/value.go | Rounding:    apd.RoundHalfEven, | Rounding:    apd.RoundHalfUp,
+JSON: 数値を UseNumber で読まない | internal/value/json.go | ⇥dec.UseNumber() | ⇥_ = dec
+JSON: 整数に小数点・指数を許す | internal/value/json.go | if strings.ContainsAny(string(n), ".eE") { | if strings.ContainsAny(string(n), "") {
+JSON: Dec の文字列に JSON の数値でない書き方を許す | internal/value/json.go | if !decNumber.MatchString(s) { | if false {
+JSON: Dec を数値で出す | internal/value/json.go | return appendString(b, v.V.Text('f')) | return append(b, v.V.Text('f')...)
+JSON: Dec を指数表記で出す | internal/value/json.go | return appendString(b, v.V.Text('f')) | return appendString(b, v.V.String())
+JSON: オブジェクトのキーの重なりを許す | internal/value/json.go | if _, ok := raws[name]; ok { | if false {
+JSON: [キー, 値] の配列のキーの重なりを許す | internal/value/json.go | if slices.ContainsFunc(keys, func(x Value) bool { return Equal(x, k) }) { | if false {
+JSON: 名前付きレコードに $tag を出さない | internal/value/json.go | if v.Tag != "" {⏎⇥⇥⇥b = appendString(b, "$tag") | if false {⏎⇥⇥⇥b = appendString(b, "$tag")
+JSON: ユニオンの位置で $tag を要らないとする | internal/value/json.go | tagRaw, ok := raws["$tag"] | tagRaw, ok := raws["$tag"], true
+JSON: 名前付きレコードの $tag が型名と違ってもよい | internal/value/json.go | || tag != t.Name { |  {
+JSON: 足りないフィールドを許す | internal/value/json.go | return nil, &Error{path, fmt.Sprintf("フィールド %s がありません", f.Name)} | continue
+JSON: 知らないフィールドを許す | internal/value/json.go | if _, ok := t.Field(name); !ok { | if false {
+JSON: 値のあとの余分なものを許す | internal/value/json.go | if _, err := dec.Token(); !errors.Is(err, io.EOF) { | if false {
+JSON: Bool のキーのマップをオブジェクトで読む | internal/value/json.go | if t.Key == types.Str {⏎⇥⇥⇥return decodeStrMap | if t.Key != types.Int {⏎⇥⇥⇥return decodeStrMap
