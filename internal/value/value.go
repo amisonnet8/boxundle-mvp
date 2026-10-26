@@ -114,6 +114,15 @@ func (m Map) Set(k, v Value) Map {
 	return Map{Keys: slices.Insert(slices.Clone(m.Keys), i, k), Vals: slices.Insert(slices.Clone(m.Vals), i, v)}
 }
 
+// Remove は、キー k を除いた新しいマップを返す。k が無ければ m をそのまま返す。m は変わらない。
+func (m Map) Remove(k Value) Map {
+	i, ok := m.find(k)
+	if !ok {
+		return m
+	}
+	return Map{Keys: slices.Delete(slices.Clone(m.Keys), i, i+1), Vals: slices.Delete(slices.Clone(m.Vals), i, i+1)}
+}
+
 // Equal は、2つの値が等しいかを返す。構造的に比べ、Dec は数値として比べる（1.0 と 1.00 は等しい）。
 // レコードはタグと、名前ごとのフィールドで比べる。
 func Equal(a, b Value) bool {

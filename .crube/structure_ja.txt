@@ -115,6 +115,12 @@ internal/	このモジュールの中だけで使うパッケージ
 		json.go	型に導かれた JSON の読み書き（FromJSON・ToJSON）と、誤りの位置つきの Error
 		value_test.go	等値・順序・マップ・Dec の文脈のテスト
 		json_test.go	JSON の読み書きと誤りの文のテスト
+		key.go	値の鍵（Equal で等しい値に同じ文字列）。distinct が出現済みを引くのに使う
+	interp/	インタプリタ（検証済みの箱の本体を評価する）
+		| eval.go が本体・ブロック・分岐・繰り返しの評価、ops.go がブロックを取らない組み込み演算。call は Interp.Call で外から与える（Run が使う）
+		eval.go	評価器：スコープ、ブロックの値、route・match（選ばれた分岐だけ）、繰り返し、emit、値の式
+		ops.go	ブロックを取らない組み込み演算（算術・比較・文字列・リスト・マップ）と実行時の誤り BX-RUN-001〜003
+		eval_test.go	組み込み演算・分岐・繰り返し・実行時の誤りのテスト（.bx の本体を検証から通して評価）
 .gitattributes	改行（すべて LF）と、記録のファイルの merge=union
 .gitignore	git に入れないもの。ルート直下のドットで始まる名前は許可リスト方式
 .golangci.yaml	golangci-lint の設定

@@ -211,3 +211,39 @@ JSON: 足りないフィールドを許す | internal/value/json.go | return nil
 JSON: 知らないフィールドを許す | internal/value/json.go | if _, ok := t.Field(name); !ok { | if false {
 JSON: 値のあとの余分なものを許す | internal/value/json.go | if _, err := dec.Token(); !errors.Is(err, io.EOF) { | if false {
 JSON: Bool のキーのマップをオブジェクトで読む | internal/value/json.go | if t.Key == types.Str {⏎⇥⇥⇥return decodeStrMap | if t.Key != types.Int {⏎⇥⇥⇥return decodeStrMap
+
+# 実行（language.md §4.3〜§4.5）
+実行: mod の符号を被除数に合わせる（0 に向けた除算） | internal/interp/ops.go | if r.Sign() != 0 && r.Sign() != b.Sign() { | if false {
+実行: idiv・mod のゼロ除算を誤りにしない | internal/interp/ops.go | if b.Sign() == 0 { | if false {
+実行: Dec の 0/0 をゼロ除算にしない | internal/interp/ops.go | if cond&(apd.DivisionByZero|apd.DivisionUndefined) != 0 { | if cond&apd.DivisionByZero != 0 {
+実行: Dec の指数の範囲を超えたら BX-RUN-002 にする | internal/interp/ops.go | errorf(diag.BXRun003, "%s の結果が Dec の範囲 | errorf(diag.BXRun002, "%s の結果が Dec の範囲
+実行: 割り切れた商の末尾の0を除かない | internal/interp/ops.go | ⇥⇥⇥⇥idealExponent(d, x.Exponent-y.Exponent) | ⇥⇥⇥⇥_ = d
+実行: min・max で数として等しい Dec を全順序で選ばない | internal/interp/ops.go | cmp = x.CmpTotal(y) | cmp = 0
+実行: min・max の Dec を有効桁28に丸めない | internal/interp/ops.go | return c.Round(d, pick) | d.Set(pick)⏎⇥⇥return 0, nil
+実行: neg・abs の Dec を有効桁28に丸めない | internal/interp/ops.go | return decResult(name, func(d *apd.Decimal) (apd.Condition, error) { return f(d, decs(args[0])) }) | _ = f⏎⇥⇥return value.Dec{V: *new(apd.Decimal).Neg(decs(args[0]))}, nil
+実行: to_dec を有効桁28に丸める | internal/interp/ops.go | return value.Dec{V: *apd.NewWithBigInt(new(apd.BigInt).SetMathBigInt(ints(args[0])), 0)}, nil | return decResult(name, func(d *apd.Decimal) (apd.Condition, error) { return value.DecContext().Round(d, apd.NewWithBigInt(new(apd.BigInt).SetMathBigInt(ints(args[0])), 0)) })
+実行: floor を 0 に向けて切り捨てる | internal/interp/ops.go | q, _ := floorDivMod(n, pow10(-int64(x.Exponent))) | q := new(big.Int).Quo(n, pow10(-int64(x.Exponent)))
+実行: round の負の桁数を許す | internal/interp/ops.go | if places.Sign() < 0 { | if false {
+実行: round の結果が有効桁28を超えても誤りにしない | internal/interp/ops.go | ⇥⇥return nil, fail⏎⇥}⏎⇥return out, nil | ⇥⇥return out, nil⏎⇥}⏎⇥return out, nil
+実行: round で桁を揃えない | internal/interp/ops.go | if _, err := value.DecContext().Quantize(&out.V, x, int32(-places.Int64())); err != nil { | if _, err := value.DecContext().Quantize(&out.V, x, max(x.Exponent, int32(-places.Int64()))); err != nil {
+実行: 空の [Dec] の sum を Int の 0 にする | internal/interp/ops.go | if typ == types.Int { | if len(xs) == 0 || typ == types.Int {
+実行: len を Str のバイト数にする | internal/interp/ops.go | n = utf8.RuneCountInString(string(a)) | n = len(a) + 0*utf8.UTFMax
+実行: take・drop の負の数を 0 にしない | internal/interp/ops.go | case n.Sign() < 0:⏎⇥⇥return 0 | case n.Sign() < 0:⏎⇥⇥return length
+実行: distinct で最初の出現を残さない | internal/interp/ops.go | for _, x := range args[0].(value.List) { | for _, x := range slices.Backward(args[0].(value.List)) {
+実行: distinct で Dec を表記で比べる | internal/value/key.go | r.Reduce(&v.V) | r.Set(&v.V)
+実行: range に上限を設けない | internal/interp/ops.go | if n.Cmp(big.NewInt(rangeLimit)) > 0 { | if false {
+実行: range の上限を 999999 にする | internal/interp/ops.go | const rangeLimit = 1_000_000 | const rangeLimit = 999_999
+実行: range を 1 から始める | internal/interp/ops.go | out = append(out, value.NewInt(i)) | out = append(out, value.NewInt(i+1))
+実行: remove が元のマップを書き換える | internal/value/value.go | return Map{Keys: slices.Delete(slices.Clone(m.Keys), i, i+1), Vals: slices.Delete(slices.Clone(m.Vals), i, i+1)} | return Map{Keys: slices.Delete(m.Keys, i, i+1), Vals: slices.Delete(m.Vals, i, i+1)}
+実行: with が元のレコードを書き換える | internal/interp/eval.go | fields := slices.Clone(r.Fields) | fields := r.Fields
+実行: 別名の構築のタグを別名のままにする | internal/interp/eval.go | r := value.Record{Tag: rt.Name, | r := value.Record{Tag: x.Tag.Name,
+実行: ブロックの値を最初のノードの値にする | internal/interp/eval.go | ⇥⇥⇥sc.add(st.ID.Name, v)⏎⇥⇥⇥last = v | ⇥⇥⇥sc.add(st.ID.Name, v)⏎⇥⇥⇥if last == nil {⏎⇥⇥⇥⇥last = v⏎⇥⇥⇥}
+実行: route の選ばれなかった分岐も評価する | internal/interp/eval.go | ⇥⇥⇥if br.Cond.Name == want { | ⇥⇥⇥if _, err := e.block(br.Block, &scope{parent: sc}); err != nil {⏎⇥⇥⇥⇥return nil, err⏎⇥⇥⇥}⏎⇥⇥⇥if br.Cond.Name == want {
+実行: match の選ばれなかった分岐も評価する | internal/interp/eval.go | ⇥⇥⇥if typ.(*types.Record).Name == r.Tag { | ⇥⇥⇥if _, err := e.block(br.Block, &scope{parent: sc, names: []string{"$" + br.Binder.Name}, vals: []value.Value{r}}); err != nil {⏎⇥⇥⇥⇥return nil, err⏎⇥⇥⇥}⏎⇥⇥⇥if typ.(*types.Record).Name == r.Tag {
+実行: any を答えが決まったら止める | internal/interp/eval.go | ⇥⇥vals[i] = v⏎⇥} | ⇥⇥vals[i] = v⏎⇥⇥if n.Op.Name == "any" && v == value.Value(value.Bool(true)) {⏎⇥⇥⇥vals = vals[:i+1]⏎⇥⇥⇥break⏎⇥⇥}⏎⇥}
+実行: all を答えが決まったら止める | internal/interp/eval.go | ⇥⇥vals[i] = v⏎⇥} | ⇥⇥vals[i] = v⏎⇥⇥if n.Op.Name == "all" && v == value.Value(value.Bool(false)) {⏎⇥⇥⇥vals = vals[:i+1]⏎⇥⇥⇥break⏎⇥⇥}⏎⇥}
+実行: 空のリストの any を true にする | internal/interp/eval.go | return value.Bool(slices.Contains(vals, value.Value(value.Bool(true)))), nil | return value.Bool(len(vals) == 0 || slices.Contains(vals, value.Value(value.Bool(true)))), nil
+実行: 空のリストの all を false にする | internal/interp/eval.go | return value.Bool(!slices.Contains(vals, value.Value(value.Bool(false)))), nil | return value.Bool(len(vals) > 0 && !slices.Contains(vals, value.Value(value.Bool(false)))), nil
+実行: sort_by を安定にしない（等しいキーを逆の順にする） | internal/interp/eval.go | slices.SortStableFunc(idx, func(a, b int) int { return value.Compare(keys[a], keys[b]) }) | slices.SortStableFunc(idx, func(a, b int) int {⏎⇥⇥if c := value.Compare(keys[a], keys[b]); c != 0 {⏎⇥⇥⇥return c⏎⇥⇥}⏎⇥⇥return b - a⏎⇥})
+実行: group_by の各グループを元の逆の順にする | internal/interp/eval.go | m.Vals[k] = append(m.Vals[k].(value.List), xs[i]) | m.Vals[k] = append(value.List{xs[i]}, m.Vals[k].(value.List)...)
+実行: fold で $acc を更新しない | internal/interp/eval.go | ⇥⇥⇥acc = v | ⇥⇥⇥_ = v

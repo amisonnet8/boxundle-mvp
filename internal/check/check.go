@@ -32,6 +32,18 @@ func Check(f *syntax.File, std []*syntax.File) []diag.Diagnostic {
 	return checkModule(f, std).sorted()
 }
 
+// Info は、検証で決まった型の情報。実行（interp）が、名前付きレコードのフィールドの順と、値から決まらない型（空のリストの sum）を引く。
+type Info struct {
+	Env       *types.Env                  // 型定義の名前から型を引く表
+	NodeTypes map[*syntax.Node]types.Type // ノードの値の型。読むだけにする
+}
+
+// Analyze は、Check と同じ検証をし、診断（位置の順）と型の情報を返す。型の情報は、エラーが無いときだけ使う。
+func Analyze(f *syntax.File, std []*syntax.File) ([]diag.Diagnostic, *Info) {
+	c := checkModule(f, std)
+	return c.sorted(), &Info{Env: c.env, NodeTypes: c.nodeTypes}
+}
+
 // checkModule は、検証を行い、その状態（解いた型の表・ポートの型）を返す。
 func checkModule(f *syntax.File, std []*syntax.File) *checker {
 	c := newChecker()

@@ -45,6 +45,7 @@
   - `internal/check/typedefs.go`：`reportCycle`の`make([]string, 0, len(cycle)+1)`の容量
   - `internal/check/typecheck.go`：`add`などと`concat`の`return ts[0]`を`ts[1]`にするもの（2つ目の引数は1つ目の型に渡せると確かめたあとで、算術・Str・リストには自動注入が無いので、2つの型は同じ）。`shape`の「ブロックを取らない演算にブロックがある」枝の`ok = false`（ブロックは`as`の後にしか読めず、束縛子を取らない演算では束縛子の数の誤りが先に`ok = false`にしている）。`match`の`argWhat(n, 0)`の数（引数が1つの演算では、文に番号を入れない）
   - `internal/check/testvalues.go`：`indexPort`の、見つからないときに返す`-1`の数を変えるもの（呼び出し側は`< 0`だけを見る）
+  - `internal/interp/ops.go`：`add`などで`args[0]`の型を見る添字を1にするもの（2つの引数は同じ型と検証が確かめている）。Int の`min`・`max`の`<=`・`>=`の境目（等しい2つのどちらを返しても同じ値）。Dec の`min`・`max`で`cmp`の比較の境目（全順序でも等しいのは、係数・指数・符号がすべて同じ値だけ）。`range`の`n.Sign() <= 0`の境目（0 なら、そのあとの繰り返しも1回も回らない）。`floorDec`の`x.Exponent >= 0`の境目（指数0で割る数は1）。`clampLen`の`n.Sign() < 0`と`> length`の境目（0 と length は、どちらの枝でも同じ値を返す）
   - `internal/check/scope.go`：`before`の列の比較`a.Col < b.Col`の`<`→`<=`。参照とノードが同じ位置から始まることは無い（参照はノードの頭の ID より後ろにある）ので、等しい場合が起きない
 
 ## Trivy：既知の脆弱性とライセンス

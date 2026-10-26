@@ -182,7 +182,8 @@ boxundle/
       perms.go                 # 権限の伝播
     value/                     # 値の表現・比較・JSON変換
     interp/
-      eval.go
+      eval.go                  # 本体・ブロック・分岐・繰り返しの評価
+      ops.go                   # ブロックを取らない組み込み演算
       trace.go
     std/
       decl/                    # text.bx re.bx math.bx date.bx hash.bx clock.bx random.bx env.bx fs.bx http.bx

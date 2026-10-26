@@ -183,6 +183,49 @@ func TestMapGetSet(t *testing.T) {
 	}
 }
 
+func TestMapRemove(t *testing.T) {
+	m := NewMap([]Value{NewInt(10), NewInt(20), NewInt(30)}, []Value{Str("x"), Str("y"), Str("z")})
+	for _, tt := range []struct {
+		key  Value
+		want Map
+	}{
+		{NewInt(10), NewMap([]Value{NewInt(20), NewInt(30)}, []Value{Str("y"), Str("z")})},
+		{NewInt(20), NewMap([]Value{NewInt(10), NewInt(30)}, []Value{Str("x"), Str("z")})},
+		{NewInt(30), NewMap([]Value{NewInt(10), NewInt(20)}, []Value{Str("x"), Str("y")})},
+		{NewInt(25), m},
+	} {
+		if got := m.Remove(tt.key); !Equal(got, tt.want) {
+			t.Errorf("Remove(%v) = %v, want %v", tt.key, got, tt.want)
+		}
+	}
+	if want := NewMap([]Value{NewInt(10), NewInt(20), NewInt(30)}, []Value{Str("x"), Str("y"), Str("z")}); !Equal(m, want) {
+		t.Errorf("Remove が元のマップを変えました: %v", m)
+	}
+}
+
+// Key は、Equal で等しいときに限って同じ鍵になる。区切りに使う文字を中身に持つ文字列や、入れ子でも混ざらない。
+func TestKey(t *testing.T) {
+	vals := []Value{
+		NewInt(1), NewInt(-1), NewInt(10), bigInt(t, "123456789012345678901234567890"),
+		dec(t, "1"), dec(t, "1.0"), dec(t, "1.00"), dec(t, "10"), dec(t, "1E+1"), dec(t, "-1.0"),
+		dec(t, "0"), dec(t, "0.00"), dec(t, "-0.0"), dec(t, "0.1"),
+		Bool(true), Bool(false),
+		Str(""), Str("1"), Str("ab"), Str("a"), Str("b"), Str("s1:a"), Str("i1;"),
+		List{}, List{NewInt(1)}, List{List{}}, List{Str("ab")}, List{Str("a"), Str("b")}, List{Str("s1:a")},
+		Map{}, NewMap([]Value{NewInt(1)}, []Value{NewInt(2)}), NewMap([]Value{NewInt(2)}, []Value{NewInt(1)}),
+		rec("A", "x", NewInt(1)), rec("", "x", NewInt(1)), rec("B", "x", NewInt(1)), rec("A", "x", NewInt(2)),
+		rec("", "x", NewInt(1), "y", NewInt(2)), rec("", "y", NewInt(2), "x", NewInt(1)), rec("", "xy", NewInt(1)),
+		rec("", "x", dec(t, "1.0")), rec("", "x", dec(t, "1.00")),
+	}
+	for _, a := range vals {
+		for _, b := range vals {
+			if same, eq := Key(a) == Key(b), Equal(a, b); same != eq {
+				t.Errorf("Key(%v) と Key(%v) が同じか = %v, Equal = %v（%q, %q）", a, b, same, eq, Key(a), Key(b))
+			}
+		}
+	}
+}
+
 func TestRecordField(t *testing.T) {
 	r := rec("A", "x", NewInt(1), "y", Str("s"))
 	if v, ok := r.Field("y"); !ok || !Equal(v, Str("s")) {

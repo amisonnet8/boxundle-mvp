@@ -182,13 +182,13 @@ record_lit  = "{" [ farg { "," farg } ] "}" ;      (* キーはポート名（$�
 | `div` | (Dec, Dec) | Dec |
 | `idiv` `mod` | (Int, Int) | Int（床除算。`mod` の符号は除数と同じ） |
 | `neg` `abs` | Int / Dec | 同じ型 |
-| `min` `max` | (Int, Int) / (Dec, Dec) | 同じ型 |
-| `to_dec` | Int | Dec |
-| `floor` | Dec | Int |
-| `round` | (Dec, places: Int) | Dec（HALF_EVEN。placesは0以上） |
+| `min` `max` | (Int, Int) / (Dec, Dec) | 同じ型（Dec が数として等しいときは、Python の `Decimal.min` / `max` と同じく全順序で選ぶ。`max 1.0 1.00` は `1.0`、`min 1.0 1.00` は `1.00`） |
+| `to_dec` | Int | Dec（丸めない） |
+| `floor` | Dec | Int（丸めない） |
+| `round` | (Dec, places: Int) | Dec（HALF_EVEN。placesは0以上。桁が足りなければ0を足して揃える。`round 1.2 3` は `1.200`） |
 | `to_str` | Int / Dec / Bool | Str（Decは指数表記を使わない。Boolは `true` / `false`） |
 
-ゼロ除算は実行時エラー `BX-RUN-001`。`round` の places が負なら `BX-RUN-002`。
+ゼロ除算は実行時エラー `BX-RUN-001`。`round` の places が負か、結果が有効桁28に収まらなければ `BX-RUN-002`。Dec の結果の指数が -100000〜100000 の範囲を超えたら `BX-RUN-003`。
 
 **比較・論理**
 
@@ -232,7 +232,7 @@ record_lit  = "{" [ farg { "," farg } ] "}" ;      (* キーはポート名（$�
 | `map` | `#n map xs as $e {blk}` | [U]（Uはブロックの値の型） |
 | `flat_map` | `#n flat_map xs as $e {blk:[U]}` | [U] |
 | `filter` | `#n filter xs as $e {blk:Bool}` | [T] |
-| `any` `all` | `#n any xs as $e {blk:Bool}` | Bool（空なら `any` は false、`all` は true） |
+| `any` `all` | `#n any xs as $e {blk:Bool}` | Bool（空なら `any` は false、`all` は true。答えが決まっても、ブロックはすべての要素について評価する） |
 | `fold` | `#n fold xs init as ($acc, $e) {blk:A}` | A（initの型と、ブロックの値の型が一致すること） |
 | `sort_by` | `#n sort_by xs as $e {blk:K}` | [T]（KはInt/Dec/Str。安定ソート・昇順） |
 | `group_by` | `#n group_by xs as $e {blk:K}` | {K -> [T]}（KはInt/Str/Bool。各グループ内は元の順） |
@@ -413,7 +413,7 @@ record_lit  = "{" [ farg { "," farg } ] "}" ;      (* キーはポート名（$�
 | BX073 | （警告）宣言しているが使っていない権限 |
 | BX-RUN-001 | ゼロ除算 |
 | BX-RUN-002 | 演算の引数が範囲外（`round` の負の桁数など） |
-| BX-RUN-003 | 資源の上限を超えた（`range` の大きさ、呼び出しの深さ） |
+| BX-RUN-003 | 資源の上限を超えた（`range` の大きさ、呼び出しの深さ、Dec の指数の範囲） |
 | BX-RUN-010 | 標準の箱の実行に失敗した（不正な正規表現・日付、通信エラーなど。原因を含める） |
 | BX-RUN-020 | 許可されていない権限が必要（不足している権限を列挙） |
 | BX-RUN-021 | ファイルの箱が `--fs-root` の外を指した |
