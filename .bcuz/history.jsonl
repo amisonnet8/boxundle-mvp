@@ -495,3 +495,8 @@
 {"v":1,"ts":"2026-10-26T03:06:56.029Z","why":"M3-2 のコミットの前に、テープに無い変更が無いか確かめる","cmd":["srwr","tapes","check"],"dir":".","exit":1,"ms":17}
 {"v":1,"ts":"2026-10-26T03:07:01.104Z","why":"M3-2 のコミットに入れるため、テープを閉じて圧縮する","cmd":["srwr","tapes","new"],"dir":".","exit":0,"ms":30}
 {"v":1,"ts":"2026-10-26T03:07:01.317Z","why":"M3-2 のコミットに入るものを確かめる","cmd":["git","status","--short"],"dir":".","exit":0,"ms":4}
+{"v":1,"ts":"2026-10-26T03:07:05.942Z","why":"M3-2 の変更・記録・テープをコミット対象にする","cmd":["git","add",".bcuz/history.jsonl",".mtqg/journal.jsonl",".srwr/tapes",".claude/rules/testing.md",".claude/skills/mutation-check/spec.txt",".crube/structure_ja.txt","docs/design/mvp.md","docs/reference/language.md","internal/check/check.go","internal/value/value.go","internal/value/value_test.go","internal/value/key.go","internal/interp"],"dir":".","exit":0,"ms":7}
+{"v":1,"ts":"2026-10-26T03:57:37.227Z","why":"足した行に、化けた文字や見えない文字が残っていないか確かめる","cmd":["sh","-c","sed -n 93p .claude/rules/srwr-usage.md | grep -cP \"[\\x{2028}\\x{2029}\\x{200B}\\x{FEFF}]\"; git diff --stat"],"dir":".","exit":0,"ms":9}
+{"v":1,"ts":"2026-10-26T03:57:43.518Z","why":"落とし穴を足したコミットの前に、テープに無い変更が無いか確かめる","cmd":["srwr","tapes","check"],"dir":".","exit":0,"ms":8}
+{"v":1,"ts":"2026-10-26T03:57:47.080Z","why":"落とし穴を足したコミットに入れるため、テープを閉じて圧縮する","cmd":["srwr","tapes","new"],"dir":".","exit":0,"ms":11}
+{"v":1,"ts":"2026-10-26T03:57:47.224Z","why":"落とし穴を足したコミットに入るものを確かめる","cmd":["git","status","--short"],"dir":".","exit":0,"ms":3}
